@@ -63,16 +63,21 @@ the site.
 
 A director's pipeline, enforced in order:
 
-1. **Commit-sheet.** One committed art direction — a single brand hue, a type
+1. **Recon.** `refscout` profiles live award-winning sites — the libraries they
+   really load, how many scenes they pin, their scroll budget, the fonts and
+   palette as painted — and `moodboard` pulls a numbered contact sheet from Bing
+   / Pinterest / are.na. Art direction gets decided from live material and a
+   dated read of the category's reflex, not from memory.
+2. **Commit-sheet.** One committed art direction — a single brand hue, a type
    system, a motion budget, named anti-references — written down *before* any
    markup. No "let's see how it looks" drift.
-2. **Generated assets.** Imagery, video frames, depth maps and 3D geometry from
+3. **Generated assets.** Imagery, video frames, depth maps and 3D geometry from
    local CLIs (Codex / Gemini image gen, Blender headless, Depth-Anything),
    routed by cost and by what each tool is actually good at.
-3. **Build.** One WebGL context, GSAP/Lenis scroll, DOM motion on transform &
+4. **Build.** One WebGL context, GSAP/Lenis scroll, DOM motion on transform &
    opacity only — from proven recipes: fluid, GPGPU particles, 3D worlds,
    scroll-morph state machines.
-4. **Gate.** Nothing ships until it passes both gates below.
+5. **Gate.** Nothing ships until it passes both gates below.
 
 ### The gates (this is the point)
 
@@ -99,11 +104,47 @@ target 60fps; the gate is what enforces it.
 node scripts/motionqa.mjs docs/showcase/swarm --headed
 ```
 
+### Recon (phase 0)
+
+```bash
+node scripts/refscout.mjs --from awwwards --limit 8
+# → design/refs/REFERENCES.md + shots/  — stack, pinned scenes, scroll budget,
+#   fonts and painted palette per site, screenshots at 1440
+
+node scripts/moodboard.mjs "editorial brutalist dark" "hard rim light macro" --limit 24
+# → design/moodboard/contact-sheet.png — 20 numbered tiles in one image, indexed to source
+```
+
+No API keys and no logins: refscout harvests the awwwards gallery (or takes URLs
+you pass it) in a real browser, moodboard pulls from Bing images, logged-out
+Pinterest and the public are.na API. Sites that withhold their CSS from a
+headless browser are reported as **NO CAPTURE** rather than guessed at, so the
+report never invents a font it didn't see.
+
+### Sourcing (phase 1)
+
+Some assets should never be generated. `source.mjs` fetches the ones a model cannot make,
+and records the licence of every file it writes:
+
+```bash
+node scripts/source.mjs hdri  "coastal dusk cold clear" --res 2k   # Poly Haven, CC0
+node scripts/source.mjs model "chair wood" --res 1k                # glTF + .bin + textures
+node scripts/source.mjs font  "serif variable"                     # banned families demoted
+```
+
+Poly Haven (CC0 meshes / HDRIs / PBR materials), Iconify, Google Fonts, Openverse and Coverr —
+no API keys. Every run appends to `assets/sourced/ASSETS-SOURCED.md`, and CC-BY images carry
+their required credit line so it can't be shipped unattributed. Stock video is allowed as an
+ambient layer and refused as a hero: if the wow moment is stock, there is no wow moment.
+
 ## What's in here
 
 ```
 SKILL.md              the skill Claude Code loads
-reference/*.md        the recipes: direct, scroll-cinema, scroll-flight, motion, assets, taste, verify, build
+reference/*.md        the recipes: recon, direct, scroll-cinema, scroll-flight, motion, assets, taste, verify, build
+scripts/refscout.mjs  reference scouting + site fingerprinting
+scripts/moodboard.mjs image search -> numbered contact sheet
+scripts/source.mjs    licence-clean asset sourcing + licence ledger
 scripts/slopscan.mjs  the anti-slop linter (zero deps)
 scripts/motionqa.mjs  the Playwright motion + a11y gate
 scripts/shoot.mjs     responsive screenshot capture
@@ -116,7 +157,8 @@ docs/                 the landing + the four live showcase sites (GitHub Pages)
 
 - **Claude Code** (the skill runs inside it).
 - **Node 18+** for `slopscan` (zero dependencies).
-- **Playwright** for `motionqa` / `shoot` (`npx playwright install chromium`).
+- **Playwright** for `motionqa` / `shoot` / `refscout` / `moodboard`
+  (`npx playwright install chromium`).
 - Optional, for asset generation: whichever local media CLIs you have
   (Codex, Gemini/`agy`, Blender). The skill routes to what's present and
   degrades gracefully to hand-authored assets when they aren't.

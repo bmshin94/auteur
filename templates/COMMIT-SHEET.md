@@ -32,7 +32,8 @@
 > ✓ "(1) scrub-pinned hero, (2) per-word text reveals on headings, (3) depth parallax in proof section. Nothing else scroll-triggered"
 
 ## 6. Reflex check
-<!-- (a) what a generic AI does for this category; (b) what a generic AI avoiding (a) does; (c) our argued deviation from both -->
+<!-- (a) what a generic AI does for this category; (b) what a generic AI avoiding (a) does; (c) our argued deviation from both.
+     If recon ran, (a) is evidence, not a guess — cite what design/refs/REFERENCES.md showed repeatedly. -->
 a) …
 b) …
 c) …

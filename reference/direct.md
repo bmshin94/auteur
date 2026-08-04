@@ -4,15 +4,22 @@ In this register the page is a film: the viewport is the frame, scroll is the ti
 
 ## Phase 0a — Intake (one message)
 
-Ask once, compactly: product & what it does · audience · the ONE feeling a visitor should leave with (awe / calm / hunger / trust / momentum...) · brand constraints (colors, fonts, logo — if any) · assets that already exist (photos, video, 3D, none) · where it will be hosted (static vs framework). If working autonomously, derive answers from available materials and write them down as assumptions.
+Ask once, compactly: product & what it does · audience · the ONE feeling a visitor should leave with (awe / calm / hunger / trust / momentum...) · brand constraints (colors, fonts, logo — if any) · assets that already exist (photos, video, 3D, none) · where it will be hosted (static vs framework). If working autonomously, derive answers from available materials and write every derived answer into the STORYBOARD header's `Assumptions made` field — not into your own reasoning, where the next session cannot see it.
 
 ## Phase 0a.5 — Recon (steal like a director)
 
-Before writing the screenplay, spend a short, bounded pass gathering live reference — the reflex table in taste.md tells you what to avoid; recon tells you what's currently *alive*:
+Before writing the screenplay, spend one short bounded pass gathering live reference — the reflex table in taste.md tells you what to avoid; recon tells you what's currently *alive*. Load `reference/recon.md` and run both legs:
 
-- If web tools are available (WebSearch / tavily / crwl): look up 3–5 recent award-level references for this category and mood — awwwards.com, godly.website, curated.design, minimal.gallery, plus "site of the day" write-ups. You are hunting for *mechanics*, not skins: a transition idea, a scene structure, a typographic move.
-- Note in the storyboard header: 2–3 named references and the ONE idea taken from each ("k72.ca — section titles pinned while content scrolls through"). Stolen ideas get adapted to this brand, never copied wholesale — a reference is a starting camera position, not a set.
-- No web tools → skip without guilt; the reflex table + transition library carry you. Never fake references you didn't actually see.
+```bash
+node scripts/refscout.mjs --from awwwards --limit 8          # → design/refs/REFERENCES.md + shots
+node scripts/moodboard.mjs "<feeling>" "<treatment>" --limit 24   # → design/moodboard/contact-sheet.png
+```
+
+- **refscout** profiles live award-level sites: their real stack, pinned scenes, scroll budget, fonts and painted palette, plus screenshots. You are hunting for *mechanics*, not skins. Look at every shot — the numbers describe the machinery, only your eyes judge the film.
+- **moodboard** answers the other question: what should this *feel* like. Two or three queries on different axes (subject / treatment / graphic language), then fill the four read-lines in `MOODBOARD.md`; they feed commit-sheet fields 2 and 4 and every scene-sheet's `lighting:`.
+- Note in the storyboard header (`References taken`): 2–3 named references and the ONE mechanic taken from each ("madewithgsap.com — section title pinned while cards scroll through it"). Stolen ideas get adapted to this brand, never copied wholesale — a reference is a starting camera position, not a set.
+- Sites the tool marks **NO CAPTURE** withheld their CSS/JS from the headless browser; open them yourself or drop them, never quote a fingerprint it refused to give. No playwright / no network → skip recon without guilt; the reflex table + transition library carry you. Never cite a reference you didn't actually see.
+- Whatever recon shows five times IS the category's first-order reflex — that finding belongs in commit-sheet field 6a, and your peak has to deviate from it.
 
 ## Phase 0b — Screenplay
 
@@ -39,6 +46,10 @@ Copy `templates/STORYBOARD.md` into the project (`design/STORYBOARD.md`) and wri
 ### Scene N — <name>            | beat: hook|rising|peak|proof|door | intensity: 1-10
 purpose:      what the viewer must FEEL and LEARN here (one line each)
 subject:      the single visual subject (product | image | typography | data | scene)
+layout_family: full-bleed-media | split-asymmetric | centred-type | stacked-cards |
+              editorial-columns | pinned-canvas | marginal-notes   (must differ from both neighbours)
+motion_family: scroll-scrub | pinned-stage | entrance-reveal | parallax-depth | kinetic-type |
+              ambient-loop | none   (≤3 distinct families page-wide; must differ from both neighbours)
 camera:       POV & framing — eye-level / low-angle (heroic) / high-angle (overview) /
               macro (detail) / orbital (show all sides) / static
 lighting:     mood of the frame — hard contrast / golden / dusk / studio / neon / paper-flat
@@ -47,9 +58,13 @@ transition_in / transition_out:  from the library (cut / wipe-mask / curtain / l
               shutter / depth-parallax / displacement / view-transition)
 scroll_len:   how much scroll this scene owns (100vh–400vh; peak usually 300–400vh pinned)
 copy:         the headline + subline that live in this scene (write the actual words)
-media:        the director's shot spec for this scene's generated asset (→ the asset plan; route via assets.md §0):
-              · type:  still | A→B morph | video | sequence | element/texture | none (type-led)
+media:        the director's shot spec for this scene's asset (→ the asset plan; route via assets.md):
+              · type:  still | A→B morph | video | sequence | element/texture | 3D model | HDRI | none (type-led)
+              · route: SOURCE or GENERATE — assets.md §0.5 decides. Geometry, IBL lighting and tiling
+                       materials are SOURCE (source.mjs, CC0); the peak keyframe and the hero video are
+                       always GENERATE; stock video is never the peak
               · tool:  codex (peak photoreal) | grok-4.5 (color hero + ANYTHING that becomes video) | agy (volume/elements)
+                       | source.mjs hdri|model|texture|icon|image|video
               · frame prompt: the literal keyframe prompt = subject + camera + lighting + palette anchor (write it now)
               · motion prompt: (video/morph only) what moves — e.g. "grok image_to_video on frame A: slow push-in + steam, 6s". Controlled A→B state change = WebGL displacement morph (two frames), NOT a video model
               · score:  (peak/ambient scenes only) mood/tempo for MiniMax music, or "none"
@@ -66,12 +81,16 @@ Changing the art direction after six scenes are built costs a rebuild; changing 
 
 1. Build ONE static hero screen as a throwaway HTML file (`design/mockup-hero.html`): real headline copy, the commit-sheet palette and type, the grid break — **no animations, no assets** (a solid-color placeholder block where the generated keyframe will live). 15–30 minutes of work, not more.
 2. Screenshot it at 1440 and 390 (shoot.mjs on the file), look at it, and run the taste.md §8 self-check on the *image*.
-3. User present → show the screenshots and get a yes/no on the art direction (offer 2 variants only if genuinely torn — a director proposes, not a menu). Autonomous → self-check against the commit-sheet and record the verdict in the storyboard header.
-4. Approved → the mockup's CSS custom properties become the project tokens verbatim. Rejected → cheap redo of phase 0c, not of the film.
+3. Run `node scripts/slopscan.mjs design/` on the mockup. It costs nothing and this is the moment to catch a banned gradient or a contrast failure — *before* these tokens become the project tokens.
+4. User present → show the screenshots and get a yes/no on the art direction (offer 2 variants only if genuinely torn — a director proposes, not a menu). Autonomous → self-check against the commit-sheet and record the verdict in the storyboard header.
+5. Three verdicts, not two:
+   - **approved** → the mockup's CSS custom properties become the project tokens verbatim.
+   - **approved with carried notes** → good enough to build on, but with named problems you are knowingly carrying (a rule that will lose against real photography, a provisional typeface). Write them into the storyboard header's `Style gate verdict` field and resolve them by GATE 2. Undeclared carried notes become permanent.
+   - **rejected** → cheap redo of phase 0c, not of the film.
 
 ## Phase 1 — Asset production
 
-Load `reference/assets.md` and derive the asset plan from the storyboard's `asset:` lines.
+Load `reference/assets.md` and derive the asset plan from the storyboard's `media:` blocks. Split it in two before spending anything: everything routed SOURCE is fetched first (`source.mjs`, minutes and free), because a real CC0 mesh or HDRI often changes what the generated frames around it need to be.
 
 Order of operations (cost discipline):
 1. List every needed asset with its scene, target resolution, and technique (from the selection table in scroll-cinema.md).

@@ -27,6 +27,51 @@ All three do transparent PNG (alpha): codex crispest, grok close, agy usable-but
 
 Missing a tool → don't fake it: descend the ladder (§4), ask the user for assets, or pivot to type-led/CSS scenes (a great film can be shot entirely in typography). Note what's available in the asset plan.
 
+## 0.5 Source before you generate — the routing decision
+
+Generation is not the only tool and for a whole class of assets it is the wrong one. You cannot
+generate a glTF mesh, a 16-bit HDRI that actually lights a WebGL scene, or a seamlessly tiling PBR
+material with matching normal/rough/AO maps — and CC0 versions of all three exist at production
+quality. `scripts/source.mjs` fetches them and writes a licence ledger for every file.
+
+```bash
+node scripts/source.mjs hdri    "coastal dusk cold clear" --res 2k
+node scripts/source.mjs model   "chair wood"              --res 1k
+node scripts/source.mjs texture "concrete rough"          --res 2k
+node scripts/source.mjs icon    "bottle"          # single noun — the index is one keyword
+node scripts/source.mjs font    "serif variable"  # banned families are demoted, not hidden
+node scripts/source.mjs image   "whisky barrel"   # CC — attribution REQUIRED
+node scripts/source.mjs video   "snow forest"     # stock — ambient only, never the peak
+```
+
+| The asset is | Route | Why |
+|---|---|---|
+| a 3D mesh (glTF/GLB) | **source** — Poly Haven, CC0 | no image model produces geometry |
+| an HDRI to light a WebGL scene | **source** — Poly Haven, CC0 | a generated "sky picture" is not an IBL; the lighting will look wrong and you won't know why |
+| a tiling PBR material (diff/nor/rough/arm) | **source** — Poly Haven, CC0 | seamlessness and matched map sets are not generation outputs |
+| an icon set | **source** — Iconify | generated icons drift in weight and stroke across a set (§7) |
+| a typeface | **source** — Google Fonts | and check it against ban #8/#18 before falling in love |
+| **the peak scene keyframe** | **generate** | it has to be this brand's world and nobody else's — this is the whole point |
+| the hero video | **generate** (§3) | the wow moment cannot be a clip three thousand pages already use |
+| an environmental / lifestyle still | **generate** (agy) | unless the brief needs a *real, identifiable* place |
+| a documentary photo of a real thing or place | **source** — Openverse | generation invents; if it must be true, it must be photographed |
+| an ambient background loop or video texture | **source ok** — Coverr | supporting layer only |
+
+**The stock-video rule is not optional.** Stock footage is generic by construction. Auteur exists to
+ship committed, specific assets, so sourced video is an ambient loop, a texture, or a
+reduced-motion fallback — never the peak. If your wow moment is stock, you do not have a wow moment.
+
+**The ledger ships with the site.** `assets/sourced/ASSETS-SOURCED.md` records the licence of every
+downloaded file. CC0 (Poly Haven) and OFL (Google Fonts) need nothing. **Openverse images are
+CC-BY / CC-BY-SA: the credit line in the ledger must appear on the page** — a footer credits block is
+fine, no credit is a licence violation. Coverr and Mixkit permit use but prohibit redistribution,
+which means the clip goes in your page, not in your public asset repo or template. Before shipping,
+read the ledger and clear every "attribution required" line.
+
+Do not confuse sourced assets with the moodboard. `design/moodboard/` is other people's work, used
+only to decide direction and then thrown away (`recon.md`). `assets/sourced/` is licensed material
+that genuinely ships.
+
 ## 1. Generating keyframes
 
 Build the prompt FROM the scene-sheet — `subject` + `camera` + `lighting` are literal prompt parameters, plus palette anchors from the commit-sheet:

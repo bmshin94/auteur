@@ -12,9 +12,12 @@
   "scripts": {
     "slopscan": "node scripts/slopscan.mjs",
     "motionqa": "node scripts/motionqa.mjs",
-    "shoot": "node scripts/shoot.mjs"
+    "shoot": "node scripts/shoot.mjs",
+    "refscout": "node scripts/refscout.mjs",
+    "moodboard": "node scripts/moodboard.mjs",
+    "source": "node scripts/source.mjs"
   },
   "devDependencies": {
-    "playwright": "^1.48.0"
+    "playwright": "^1.62.1"
   }
 }

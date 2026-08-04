@@ -20,6 +20,12 @@ node <skill-dir>/scripts/slopscan.mjs <src-dir>
 node <skill-dir>/scripts/shoot.mjs <url> --stops 7 --breakpoints 390,768,1440 --reduced-motion
 ```
 
+> **Serve it. Do not verify over `file://`.** `fetch` to a `file:` URL is blocked, so any page that
+> loads a glTF, an HDRI, a JSON or a sequence manifest will silently fall back to its poster — and
+> `shoot.mjs` will happily photograph a perfectly attractive page in which the entire peak never
+> booted. A false PASS is worse than a FAIL, and this one is invisible unless you already know what
+> the peak looks like. Any static server does; 40 lines of `node:http` is enough.
+
 Then **open and look at every frame**. You are looking for what linters cannot see:
 
 - text overflowing/wrapping ugly at any breakpoint (the viewport is part of the design)
@@ -82,6 +88,7 @@ Console over the whole run: zero errors, zero `THREE.WebGLRenderer: Context Lost
 | Motion (Tier-1 scenes) | minFps ≥50 @4× throttle · long-task ≤50ms · no WebGL leak · audio gesture-gated | scripts/motionqa.mjs (§2.5) |
 | Keyboard | tab order sane, focus visible, no traps, ESC closes overlays | manual pass |
 | No-JS | content readable, page navigable | disable JS, reload |
+| Fallback payload | every degraded cut still carries the peak's *information*, not just a picture of it | reduced-motion / no-JS / no-WebGL, at 390 too — a callout panel hidden by a mobile breakpoint deletes the payload while the desktop screenshots look fine |
 
 ## 4. Sign-off
 

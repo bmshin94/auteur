@@ -143,11 +143,15 @@ The quality of a moodboard is decided entirely by the queries. Three rules:
 2. **Search the feeling, not the category.** `"coffee website"` returns other coffee websites — the
    category reflex, delivered to your desk. `"steel and steam, industrial macro, warm shadow"`
    returns material you can actually direct from.
-3. **Anchor a treatment query with a concrete noun.** Image search collapses an abstract phrase to
+3. **Check the anchor noun is not half of a fixed compound.** `"polished brass instrument macro"`
+   returns trumpets and saxophones, because *brass instrument* is one word to a search index. Same
+   trap: hard surface, light bulb, glass ceiling, sound board, steel drum. The noun is supposed to
+   ground the query, and an idiom hijacks it instead.
+4. **Anchor a treatment query with a concrete noun.** Image search collapses an abstract phrase to
    its most commercially indexed substring: `"hard rim light on dark glass, wet stone, near-black
    macro"` came back as *hard surface* — hi-vis workers, gravel, granite pavers. `"wet black stone,
    single hard light"` does not. When one query of three drifts, that is the mechanism.
-4. **Never search a brand you intend to resemble.** That is the shortest path to a page that looks
+5. **Never search a brand you intend to resemble.** That is the shortest path to a page that looks
    like a competitor with the logo swapped.
 
 ### Reading the sheet

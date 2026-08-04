@@ -34,15 +34,40 @@ generate a glTF mesh, a 16-bit HDRI that actually lights a WebGL scene, or a sea
 material with matching normal/rough/AO maps — and CC0 versions of all three exist at production
 quality. `scripts/source.mjs` fetches them and writes a licence ledger for every file.
 
+Search first with `--list` (prints a shortlist to stdout, downloads nothing, writes no ledger), then
+fetch. **Always pass `--out`** — the default is `assets/sourced` relative to the current directory,
+which drops a ledger and a 2.6MB font-metadata cache wherever you happened to be standing.
+
 ```bash
-node scripts/source.mjs hdri    "coastal dusk cold clear" --res 2k
-node scripts/source.mjs model   "chair wood"              --res 1k
-node scripts/source.mjs texture "concrete rough"          --res 2k
-node scripts/source.mjs icon    "bottle"          # single noun — the index is one keyword
-node scripts/source.mjs font    "serif variable"  # banned families are demoted, not hidden
-node scripts/source.mjs image   "whisky barrel"   # CC — attribution REQUIRED
-node scripts/source.mjs video   "snow forest"     # stock — ambient only, never the peak
+O=assets/sourced
+node scripts/source.mjs model   "microscope" --list          # read the shortlist, then commit to one
+node scripts/source.mjs hdri    "coastal dusk 03" --res 1k --out $O   # numeric suffixes work
+node scripts/source.mjs model   "vintage microscope" --res 1k --out $O
+node scripts/source.mjs texture "concrete rough"     --res 1k --out $O
+node scripts/source.mjs icon    "bottle"             --out $O  # single noun — the index is one keyword
+node scripts/source.mjs font    "serif variable"     --out $O  # downloads the woff2 and prints the @font-face
+node scripts/source.mjs image   "whisky barrel"      --out $O  # CC — attribution REQUIRED
+node scripts/source.mjs video   "snow forest"        --out $O  # stock — ambient only, never the peak
 ```
+
+**Inspect a mesh before you write the scene it appears in.** `node -e "console.log(JSON.parse(require('fs').readFileSync('x.gltf')).nodes.map(n=>n.name))"` costs nothing and changes films: a mesh whose parts are *named* can come apart, label itself, and be re-assembled on scroll, which is a scene no image model can express at any budget. A mesh that is one welded blob can only spin. Poly Haven's listing also carries `condition` (clean / worn / weathered / rusted) and `material` — a `worn` asset reads as an antique, not as a product someone can buy this week.
+
+**Sourced masters are heavy — budget for the conversion, not the download.** A 1k mesh + HDRI + PBR set is ~7MB of masters, which is most of a page budget. Three moves take that to well under 1MB:
+
+```bash
+# HDRI → 512×256 is indistinguishable once PMREM blurs it by roughness anyway
+ffmpeg -i env_1k.hdr -vf scale=512:256 -c:v hdr -update 1 -frames:v 1 env_512.hdr
+# mesh textures: 1024 for albedo/ARM, 512 for normals, q4
+ffmpeg -i tex_diff_1k.jpg -vf scale=1024:1024 -q:v 4 tex_diff.jpg
+# drop maps you do not sample: `arm` already carries AO+roughness+metal, so `rough` and `disp` are dead weight
+```
+
+**Getting three.js into a no-build page.** Sourcing a mesh means you now need a renderer, and there are three tempting wrong answers: ES modules with an import map (CORS-blocked over `file://`), a CDN (a third-party origin most briefs forbid), and the old UMD build (wrong colour management). Bundle once, commit the output:
+
+```bash
+npm i three@latest && npx esbuild entry.js --bundle --format=iife --global-name=THREEX --minify > assets/vendor/three-bundle.js
+```
+Name the ~20 symbols you actually use in `entry.js` rather than `export * from 'three'` — that alone was 731KB → 560KB. Note `RGBELoader` is a deprecation shim in recent releases; the class is `HDRLoader`.
 
 | The asset is | Route | Why |
 |---|---|---|

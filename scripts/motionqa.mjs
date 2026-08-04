@@ -44,11 +44,16 @@ await page.evaluate(() => new Promise(r => {
 const cdp = await page.context().newCDPSession(page);
 await cdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
 
+// `buffered: true` replays every long task since navigation — bundle parse, shader compile,
+// PMREM prefilter — into a number the rubric defines as "during the scroll". Observe live only,
+// after warm-up, and report load-time separately so both are visible and neither is a false FAIL.
 await page.evaluate(() => {
-  window.__lt = 0;
+  window.__lt = 0; window.__ltLoad = 0;
   try {
-    new PerformanceObserver(l => { for (const e of l.getEntries()) window.__lt = Math.max(window.__lt, e.duration); })
+    new PerformanceObserver(l => { for (const e of l.getEntries()) window.__ltLoad = Math.max(window.__ltLoad, e.duration); })
       .observe({ type: 'longtask', buffered: true });
+    new PerformanceObserver(l => { for (const e of l.getEntries()) window.__lt = Math.max(window.__lt, e.duration); })
+      .observe({ type: 'longtask' });
   } catch { /* longtask unsupported */ }
 });
 
@@ -63,6 +68,7 @@ const minFps = await page.evaluate(() => new Promise(res => {
   })(performance.now());
 }));
 const maxLongTask = await page.evaluate(() => window.__lt || 0);
+const loadLongTask = await page.evaluate(() => window.__ltLoad || 0);
 await browser.close();
 
 const fails = [], advisories = [];
@@ -77,14 +83,17 @@ if (audioAutoplaying) fails.push('audio/video playing with sound on load (must b
 const ctxErr = consoleErrors.filter(e => /WebGL|Context Lost|Too many active/i.test(e));
 if (ctxErr.length) fails.push(`WebGL context error in console: ${ctxErr[0].slice(0, 80)}`);
 
+// Load-time long tasks are real information (bundle parse, shader compile, PMREM prefilter) but
+// they are not what the rubric row asks about, so they are reported, never failed on.
+if (loadLongTask > MAX_LT) advisories.push(`load-time long task ${loadLongTask.toFixed(0)}ms (bundle parse / shader compile) — not a scroll fail, but it delays interactivity`);
 const summary = {
-  minFps: +minFps.toFixed(0), maxLongTask: +maxLongTask.toFixed(0),
+  minFps: +minFps.toFixed(0), maxLongTask: +maxLongTask.toFixed(0), loadLongTask: +loadLongTask.toFixed(0),
   audioAutoplaying, consoleErrors: consoleErrors.length, headed, softWebgl, fails, advisories,
 };
 if (jsonMode) {
   process.stdout.write(JSON.stringify(summary, null, 2) + '\n');
 } else {
-  process.stdout.write(`motionqa: minFps ${summary.minFps} @${THROTTLE}x - max long-task ${summary.maxLongTask}ms - audio ${audioAutoplaying ? 'AUTOPLAYING(!)' : 'gesture-gated'} - console errors ${consoleErrors.length}${softWebgl ? ' [headless/software-WebGL]' : ''}\n`);
+  process.stdout.write(`motionqa: minFps ${summary.minFps} @${THROTTLE}x - scroll long-task ${summary.maxLongTask}ms (load ${summary.loadLongTask}ms) - audio ${audioAutoplaying ? 'AUTOPLAYING(!)' : 'gesture-gated'} - console errors ${consoleErrors.length}${softWebgl ? ' [headless/software-WebGL]' : ''}\n`);
   for (const a of advisories) process.stdout.write(`ADVISORY ${a}\n`);
   for (const f of fails) process.stdout.write(`FAIL ${f}\n`);
   if (!fails.length) process.stdout.write(advisories.length ? 'PASS (perf advisories — verify headed)\n' : 'PASS\n');

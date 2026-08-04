@@ -16,16 +16,16 @@
  *   --limit N      how many assets (default 5, cap 20)
  *   --out DIR      output dir (default assets/sourced)
  *   --res 1k|2k|4k|8k   resolution for hdri/model/texture (default 2k)
- *   --list         search only, download nothing
+ *   --list         print a shortlist to stdout; download nothing and write no ledger
  *
- * Always writes DIR/ASSETS-SOURCED.md — the licence ledger. Read it before you ship.
+ * Writes DIR/ASSETS-SOURCED.md — the licence ledger — on every real fetch. Read it before you ship.
  *
  * Sources (all no-key, verified live 2026-08):
  *   hdri/model/texture  Poly Haven      CC0        no attribution required
  *   icon                Iconify         per set    licence reported per icon (MIT/Apache/CC-BY/OFL)
  *   font                Google Fonts    OFL/Apache free for commercial use, no attribution in UI
  *   image               Openverse       CC-BY/BY-SA ATTRIBUTION REQUIRED — ledger carries the string
- *   video               Coverr, Mixkit  free-use    no redistribution; see the taste warning below
+ *   video               Coverr          free-use    no redistribution; see the taste warning below
  *
  * The video caveat is not legal boilerplate. Stock footage is generic by construction — the same
  * drone shot is on three thousand landing pages. Auteur's entire thesis is committed, specific
@@ -50,7 +50,7 @@ if (!args.length || args.includes('--help') || !KINDS.includes(args[0])) {
   icon                Iconify, licence per set
   font                Google Fonts, OFL/Apache
   image               Openverse, CC — attribution REQUIRED, ledger carries it
-  video               Coverr/Mixkit, free-use    — ambient/fallback only, never the peak`);
+  video               Coverr, free-use           — ambient/fallback only, never the peak`);
   process.exit(args.length && !KINDS.includes(args[0]) ? 1 : 0);
 }
 
@@ -79,7 +79,9 @@ async function text(url) {
   if (!r.ok) throw new Error(`${r.status} ${url.slice(0, 70)}`);
   return r.text();
 }
-const words = q => q.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2);
+// Keep pure-digit tokens: Poly Haven names most of its library thing_01 … thing_09, so dropping
+// short words made a specific asset unaddressable ("studio small 03" silently returned 09).
+const words = q => q.toLowerCase().split(/[\s,]+/).filter(w => w.length > 2 || /^\d+$/.test(w));
 
 /** score a Poly Haven asset against the query across name / tags / categories / attributes */
 function phScore(slug, a, ws) {
@@ -203,7 +205,7 @@ async function fonts() {
     .slice(0, limit);
   if (!ranked.length) console.error(`[source] no Google font matched. Say the shape: "serif variable", "mono", "display grotesk".`);
 
-  return ranked.map(({ f }) => {
+  const out = ranked.map(({ f }) => {
     const axes = (f.axes || []).map(a => `${a.tag} ${a.min}–${a.max}`).join(', ');
     const banned = GF_BANNED.includes(f.family);
     const spec = (f.axes || []).find(a => a.tag === 'wght')
@@ -215,9 +217,27 @@ async function fonts() {
       landing: `https://fonts.google.com/specimen/${f.family.replace(/ /g, '+')}`,
       note: `${banned ? '⛔ ON THE AUTEUR BAN LIST — pick something else. ' : ''}popularity #${f.popularity ?? '?'} · weights ${Object.keys(f.fonts || {}).length}${axes ? ` · variable: ${axes}` : ' · static only'}`,
       css: `https://fonts.googleapis.com/css2?family=${spec}&display=swap`,
-      files: [],                                            // fonts are linked, not downloaded here
+      files: [],                                            // filled below with the real woff2
+      family: f.family,
     };
   });
+
+  // Most of what this skill builds must have zero third-party origins, so linking
+  // fonts.googleapis.com is not an answer. Resolve the CSS with a browser UA (an old UA gets you
+  // ttf), take the latin block, and fetch the actual woff2 so the page can self-host.
+  for (const it of out) {
+    try {
+      const css = await text(it.css);
+      // Google emits one @font-face per unicode subset, each preceded by a `/* latin */` comment.
+      const latin = (css.match(/\/\*\s*latin\s*\*\/([\s\S]*?)(?=\/\*|$)/) || [, ''])[1] || css;
+      const url = (latin.match(/url\((https:\/\/[^)]+\.woff2)\)/) || [])[1];
+      if (url) {
+        it.files.push({ url, path: `${it.family.replace(/ /g, '')}.woff2` });
+        it.selfHost = `@font-face{font-family:'${it.family}';src:url('fonts/${it.family.replace(/ /g, '')}.woff2') format('woff2');font-display:swap;font-weight:${(latin.match(/font-weight:\s*([^;]+)/) || [, '400'])[1].trim()};font-style:normal}`;
+      }
+    } catch { /* leave it link-only; the ledger will show no file */ }
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------- Openverse (CC)
@@ -271,9 +291,28 @@ catch (e) { console.error(`[source] ${kind} lookup failed: ${e.message}`); proce
 
 if (!items.length) { console.error('[source] nothing found.'); process.exit(1); }
 
+// --list is a read loop: print the shortlist and touch nothing. Appending every exploratory
+// search to the ledger buried three shipped assets under 260 lines of search history.
+if (listOnly) {
+  console.log(`
+${items.length} match(es) for "${query}" (${kind}):
+`);
+  for (const it of items) {
+    console.log(`  ${it.id}`);
+    console.log(`    ${it.title}  ·  ${it.licence}${it.credit ? `  ·  ${it.credit}` : ''}`);
+    if (it.note) console.log(`    ${it.note}`);
+    if (it.css) console.log(`    css: ${it.css}`);
+    console.log(`    ${it.landing}`);
+    if (it.files.length) console.log(`    ${it.files.length} file(s), ${Math.round(it.files.reduce((n, f) => n + (f.size || 0), 0) / 1024)}KB`);
+    console.log('');
+  }
+  console.log(`Nothing downloaded and no ledger written (--list). Re-run without --list to fetch.`);
+  process.exit(0);
+}
+
 await mkdir(outDir, { recursive: true });
 let bytes = 0, files = 0;
-if (!listOnly) {
+{
   for (const it of items) {
     for (const f of it.files) {
       const dest = join(outDir, kind, f.path);
@@ -311,7 +350,8 @@ const block = [
     if (it.attribution) l.push(`- ⚠ **attribution required** — put this on the page: \`${it.attribution}\``);
     l.push(`- source: ${it.landing}`);
     if (it.note) l.push(`- ${it.note}`);
-    if (it.css) l.push(`- css: \`<link rel="stylesheet" href="${it.css}">\``);
+    if (it.selfHost) l.push(`- self-host (no third-party origin): \`${it.selfHost}\``);
+    else if (it.css) l.push(`- css: \`<link rel="stylesheet" href="${it.css}">\`  (woff2 could not be resolved — this links a third-party origin)`);
     for (const f of it.files) l.push(`- file: \`${kind}/${f.path}\`${f.written ? ` (${Math.round(f.written / 1024)}KB)` : f.skipped ? ' (cached)' : f.error ? ` — FAILED ${f.error}` : ' (not downloaded)'}`);
     return [...l, ''];
   }),

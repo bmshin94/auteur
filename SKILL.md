@@ -1,7 +1,7 @@
 ---
 name: auteur
 description: Design and build complete, distinctive web experiences from scratch — both standard product/marketing pages with award-level craft and cinematic scroll-directed "wow" sites where the page is directed like a film, with AI-generated visual assets (consistent keyframe images, scroll-scrubbed sequences, WebGL displacement transitions between two generated frames, locally generated video via first→last-frame chains, and an optional ambient score). Use whenever the user wants to create or redesign a landing page, website, hero section, portfolio, promo or product page; asks for scroll animations, storytelling pages, or a site that feels like a movie; or says "make it beautiful", "make it wow", "cinematic", "сделай красиво", "вау-сайт", "кинематографичный сайт", "сделай лендинг" — even if they don't name a technique. Includes asset generation via local CLIs, an executable anti-slop linter, and a screenshot verification loop. Not for polishing an existing UI built by someone else (use impeccable for that) and not for backend-only tasks.
-version: 1.0.0
+version: 1.1.0
 user-invocable: true
 argument-hint: "[build|direct|edit|audit|recon] <brief or target>"
 allowed-tools:

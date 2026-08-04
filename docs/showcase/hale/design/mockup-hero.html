@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HALE — hero mockup (throwaway, phase 0c)</title>
+<style>
+/* ── tokens (candidate: these become the project tokens if the gate passes) ───── */
+:root{
+  --ink-0:#0c0a06;  --ink-1:#15120d;  --rule:#37322b;
+  --text:#e1ddd8;   --dim:#9d978f;    --dim-2:#857f77;
+  --brass:#cc9b49;  --brass-lo:#8e6a2e;
+  --paper:#e6eaee;  --paper-ink:#161b20;
+
+  --mono:"Martian Mono","Courier New",monospace;
+  --serif:"Newsreader",Georgia,serif;
+
+  --rail-x:clamp(52px,15vw,224px);
+  --gutter:clamp(20px,4vw,56px);
+}
+@font-face{font-family:"Martian Mono";src:url("../assets/fonts/MartianMono.woff2") format("woff2");font-weight:100 800;font-display:swap}
+@font-face{font-family:"Newsreader";src:url("../assets/fonts/Newsreader.woff2") format("woff2");font-weight:200 800;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ink-0); color:var(--text);
+  font-family:var(--serif); font-size:17px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── the drafting rail — the one grid break ───────────────────────────────────── */
+.rail{position:fixed;inset:0 auto 0 var(--rail-x);width:1px;background:var(--rule);z-index:2}
+.rail::before,.rail::after{
+  content:"";position:absolute;left:-4px;width:9px;height:1px;background:var(--brass-lo);
+}
+.rail::before{top:22vh} .rail::after{top:78vh}
+
+/* ── one label class, reused everywhere (never a per-section eyebrow) ─────────── */
+.lbl{
+  font-family:var(--mono);font-size:10px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--dim-2);
+  font-variation-settings:"wdth" 100;
+}
+
+/* ── frame chrome ─────────────────────────────────────────────────────────────── */
+.chrome{
+  position:fixed;inset:0 0 auto 0;z-index:4;
+  display:flex;justify-content:space-between;gap:1rem;
+  padding:14px var(--gutter);border-bottom:1px solid var(--rule);
+  background:var(--ink-0);
+}
+.chrome b{color:var(--text);font-weight:400}
+
+/* ── hero ─────────────────────────────────────────────────────────────────────── */
+.hero{
+  position:relative;min-height:100vh;
+  display:grid;grid-template-columns:var(--rail-x) minmax(0,1fr);
+  align-items:center;padding:96px var(--gutter) 64px 0;
+}
+.hero-copy{grid-column:2;padding-left:32px;max-width:min(620px,46vw);position:relative;z-index:3}
+
+.wordmark{
+  font-family:var(--mono);font-weight:700;
+  font-size:clamp(40px,6.2vw,88px);line-height:.92;letter-spacing:-.035em;
+  font-variation-settings:"wdth" 112;
+  margin:0;color:var(--text);
+}
+.serialline{display:flex;align-items:baseline;gap:14px;margin-top:10px}
+.serialline .no{font-family:var(--mono);font-size:15px;color:var(--brass);letter-spacing:.02em}
+
+/* dimension line: the lacoste steal — a rule that measures instead of separating */
+.dim{display:flex;align-items:center;gap:10px;margin:30px 0 26px;color:var(--brass-lo)}
+.dim .tick{width:1px;height:9px;background:currentColor;flex:none}
+.dim .bar{height:1px;background:currentColor;flex:1}
+.dim .val{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--brass);flex:none}
+
+h1{
+  font-family:var(--mono);font-weight:500;
+  font-size:clamp(23px,2.9vw,42px);line-height:1.14;letter-spacing:-.035em;
+  font-variation-settings:"wdth" 108;
+  margin:0;color:var(--text);text-wrap:balance;
+}
+.sub{margin:22px 0 0;max-width:56ch;color:var(--dim);font-size:1.05rem}
+.sub em{color:var(--text);font-style:italic}
+
+/* ── placeholder for the live render (phase 0c only) ─────────────────────────── */
+.stage-ph{
+  position:absolute;inset:0 0 0 auto;width:58%;
+  border:1px dashed var(--rule);
+  display:grid;place-items:center;
+  background:
+    radial-gradient(58% 42% at 62% 44%, #1a1611 0%, #0c0a06 72%);
+}
+.stage-ph span{color:var(--dim-2)}
+
+.foot{
+  position:fixed;inset:auto 0 0 0;z-index:4;
+  display:flex;justify-content:space-between;gap:1rem;
+  padding:12px var(--gutter);border-top:1px solid var(--rule);background:var(--ink-0);
+}
+
+/* film grain — static, one paint, no animation (taste.md §6) */
+.grain{
+  position:fixed;inset:0;z-index:5;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:var(--rail-x) minmax(0,1fr);padding-top:110px;align-items:end;padding-bottom:34vh}
+  .hero-copy{max-width:none;padding-left:20px}
+  .stage-ph{width:auto;inset:80px 0 auto 0;height:40vh}
+  .chrome .mid{display:none}
+}
+</style>
+</head>
+<body>
+<div class="rail" aria-hidden="true"></div>
+
+<header class="chrome lbl">
+  <span><b>Hale Instrument Co.</b></span>
+  <span class="mid">Sheffield</span>
+  <span>Est. 1974</span>
+</header>
+
+<main class="hero">
+  <div class="stage-ph" aria-hidden="true"><span class="lbl">Scene 1 · live render goes here</span></div>
+  <div class="hero-copy">
+    <p class="wordmark">HALE</p>
+    <div class="serialline">
+      <span class="no">No. 6</span>
+      <span class="lbl">Field microscope</span>
+    </div>
+
+    <div class="dim" aria-hidden="true">
+      <i class="tick"></i><i class="bar"></i><span class="val">312 mm</span><i class="bar"></i><i class="tick"></i>
+    </div>
+
+    <h1>The only instrument we make.</h1>
+    <p class="sub">Machined in Sheffield since 1974. Six revisions in fifty-two years, and no
+      model years. If you own one, we still stock every part of it.</p>
+  </div>
+</main>
+
+<footer class="foot lbl">
+  <span>Scroll to open the instrument</span>
+  <span>01 / 06</span>
+</footer>
+
+<div class="grain" aria-hidden="true"></div>
+</body>
+</html>

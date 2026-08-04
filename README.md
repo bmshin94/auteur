@@ -20,7 +20,7 @@ check.**
 
 ## The proof
 
-Don't take the pitch — open the six sites. Each was built by auteur, and each
+Don't take the pitch — open the seven sites. Each was built by auteur, and each
 passes the skill's own linter with **0 fails / 0 warns**:
 
 | Site | Technique | Live |
@@ -28,6 +28,7 @@ passes the skill's own linter with **0 fails / 0 warns**:
 | **FLUX** | WebGL fluid simulation that tears the wordmark under the cursor | [open ↗](https://agiwhitelist.github.io/auteur/showcase/flux/) |
 | **STATIC** | Broadcast-glitch type you can shred with a fast drag, crisp at rest | [open ↗](https://agiwhitelist.github.io/auteur/showcase/static/) |
 | **SWARM** | 131,072 GPU particles on a curl-noise field, settling into a wordmark | [open ↗](https://agiwhitelist.github.io/auteur/showcase/swarm/) |
+| **HALE** | A CC0 microscope mesh under a CC0 HDRI, taken apart on scroll into eight named parts — sourced, not generated | [open ↗](https://agiwhitelist.github.io/auteur/showcase/hale/) |
 | **DRIFT** | An atmospheric 3D world of monoliths + volumetric fog you fly through | [open ↗](https://agiwhitelist.github.io/auteur/showcase/drift/) |
 | **ATLAS** | A photoreal camera flight (dunes → canyon → coast → summit) — real AI video, scrubbed by scroll | [open ↗](https://agiwhitelist.github.io/auteur/showcase/atlas/) |
 | **ABYSS** | A photoreal ocean dive (surface → reef → twilight → bioluminescence → abyss) — video + a scroll-driven camera dolly | [open ↗](https://agiwhitelist.github.io/auteur/showcase/abyss/) |
@@ -150,7 +151,7 @@ scripts/motionqa.mjs  the Playwright motion + a11y gate
 scripts/shoot.mjs     responsive screenshot capture
 templates/            commit-sheet, storyboard, cinema-QA, design templates
                       + scroll-flight-engine.js — drop-in photoreal scroll-scrubbed-video engine
-docs/                 the landing + the four live showcase sites (GitHub Pages)
+docs/                 the landing + the seven live showcase sites (GitHub Pages)
 ```
 
 ## Requirements

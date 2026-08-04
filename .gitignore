@@ -16,3 +16,9 @@ assets/sourced/
 # OMC session state — operational artifacts, never part of the release
 .omc/
 !.omc/skills/
+
+# recon working material — other people's imagery, never published
+**/design/refs/shots/
+**/design/moodboard/img/
+**/design/moodboard/contact-sheet*
+**/design/moodboard/_sheet*.html

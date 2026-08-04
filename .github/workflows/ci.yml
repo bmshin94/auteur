@@ -18,11 +18,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # Every showcase dir is discovered, not listed: a hand-maintained list silently
+      # stops gating the newest site, which is exactly when the claim needs gating.
       - name: Anti-slop gate on every shipped page
         run: |
           set -e
           fail=0
-          for dir in docs docs/showcase/flux docs/showcase/static docs/showcase/swarm docs/showcase/drift; do
+          for dir in docs $(find docs/showcase -mindepth 1 -maxdepth 1 -type d | sort); do
             echo "::group::slopscan $dir"
             node scripts/slopscan.mjs "$dir" || fail=1
             echo "::endgroup::"

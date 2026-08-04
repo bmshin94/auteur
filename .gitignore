@@ -8,3 +8,11 @@ playwright-report/
 _*.mjs
 **/shots/
 **/*-capture.png
+# recon artifacts (references and moodboards are other people's work — working material only)
+design/refs/
+design/moodboard/
+assets/sourced/
+
+# OMC session state — operational artifacts, never part of the release
+.omc/
+!.omc/skills/

@@ -288,19 +288,39 @@ function checkCardCloneGrid(blocks, findings) {
   }
 }
 
+// Ban #16 is "em-dash-HEAVY sentences" — a density property, not the presence of the glyph.
+// Flagging every occurrence trains you to suppress the rule, which is how a linter loses its
+// authority; and the old remediation ("use &mdash;") renders the identical character, so
+// following it changed nothing the rule claimed to detect.
+const PROSE_EXT = new Set(['.html', '.htm', '.md', '.jsx', '.tsx', '.vue', '.svelte']);
 function checkEmDashCopy(text, ext, findings) {
-  if (ext === '.css' || ext === '.scss') return;
+  if (!PROSE_EXT.has(ext)) return;
+  // Keep only what a visitor actually reads: no script/style, no comments, no <title>/<meta>.
+  const prose = text
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<title[\s\S]*?<\/title>/gi, ' ')
+    .replace(/<meta[^>]*>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|\s)\/\/[^\n]*/g, ' ')
+    .replace(/<[^>]+>/g, ' ');
+
+  const dashes = (prose.match(/—/g) || []).length;
+  if (dashes < 3) return;
+  const sentences = (prose.match(/[.!?]["')\]]?(\s|$)/g) || []).length || 1;
+  const words = (prose.match(/\S+/g) || []).length || 1;
+  const perSentence = dashes / sentences;
+  const per100w = (dashes / words) * 100;
+  // Two independent ways to be em-dash-heavy: one per two sentences, or >1 per 100 words.
+  if (perSentence < 0.5 && per100w < 1) return;
+
   const lineAt = makeLineAt(text);
-  const re = /—/g;
-  let m;
-  while ((m = re.exec(text)) !== null) {
-    // Skip if inside a CSS comment or line comment
-    const lineStart = text.lastIndexOf('\n', m.index) + 1;
-    const lineText = text.slice(lineStart, text.indexOf('\n', m.index) + 1 || undefined);
-    if (/^\s*(\/\/|\/\*|\*|<!--)/.test(lineText)) continue;
-    findings.push({ rule: 'EM_DASH_COPY', severity: 'warn', line: lineAt(m.index),
-      detail: `em dash (—) in text content — use &mdash; or CSS content` });
-  }
+  const first = text.indexOf('—');
+  findings.push({
+    rule: 'EM_DASH_COPY', severity: 'warn', line: lineAt(first < 0 ? 0 : first),
+    detail: `${dashes} em dashes across ${sentences} sentences / ${words} words of visible copy (${perSentence.toFixed(2)}/sentence, ${per100w.toFixed(1)} per 100 words) — the dash is doing the work sentence structure should. Rewrite the densest ones as full sentences; an occasional em dash is fine.`,
+  });
 }
 
 function checkEyebrowEverywhere(blocks, findings) {

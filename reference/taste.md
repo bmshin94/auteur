@@ -63,7 +63,7 @@ If the project's category isn't listed, derive the two reflexes yourself — the
 3. Text face: prioritize x-height, open apertures, and a real italic. Verify tabular figures if numbers matter.
 4. Variable font when you need >2 weights (one file, animatable weight for kinetic type).
 
-**Numbers:** display clamp max ≤6rem; letter-spacing ≥−0.04em on display, slightly positive on small caps; body 65–75ch; line-height: display 0.95–1.1, body 1.4–1.6; `text-wrap: balance` on h1–h3, `text-wrap: pretty` on prose. Fluid type via clamp() with a rem base so zoom works.
+**Numbers:** display clamp max ≤6rem **for headings inside prose flow** — a wordmark, a type-led hero, or a scene where oversized type IS the subject is exempt and routinely runs 100–140px at 1440 (refscout the top tier and you will measure exactly that). The ceiling exists to stop 200px of Inter standing in for an idea, not to stop a typographic hero; if you exceed it, the commit-sheet has to say the type is the signature. letter-spacing ≥−0.04em on display, slightly positive on small caps; body 65–75ch; line-height: display 0.95–1.1, body 1.4–1.6; `text-wrap: balance` on h1–h3, `text-wrap: pretty` on prose. Fluid type via clamp() with a rem base so zoom works.
 
 **Kinetic typography is architecture, not decoration:** oversized text may BE the hero (cheapest wow that exists — zero asset weight). If type is the hero, assets can wait; see direct.md.
 

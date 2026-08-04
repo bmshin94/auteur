@@ -12,6 +12,7 @@ import { resolve, join } from 'path';
 const args = process.argv.slice(2);
 if (!args.length || args[0] === '--help') {
   console.log('Usage: node shoot.mjs <url> [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--reduced-motion] [--full]');
+  console.log('Writes: <out>/bp<width>-stop<NN>.png  (also bp<width>-rm-stop<NN>.png with --reduced-motion, bp<width>-full.png with --full)');
   process.exit(0);
 }
 

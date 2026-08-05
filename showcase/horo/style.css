@@ -1,0 +1,577 @@
+/* ==========================================================================
+   HORO LIMITED — style.css
+   Decisions recorded in design/COMMIT-SHEET.md. Tokens approved there appear
+   here verbatim. Light page (mean L ≈ 0.72), committed dial-green fields,
+   serif × system-sans, one live CSS dial as the signature object.
+   ========================================================================== */
+
+:root {
+  /* color */
+  --bg: oklch(0.965 0.005 150);            /* cool off-white, tinted toward the green */
+  --ink: oklch(0.235 0.02 160);            /* deep green-ink for text */
+  --muted: oklch(0.40 0.02 158);           /* secondary text, still ≥ 4.5:1 on --bg */
+  --green: oklch(0.34 0.065 158);          /* dial enamel — the brand field */
+  --green-deep: oklch(0.25 0.045 160);     /* footer / dial depth */
+  --on-green: oklch(0.945 0.012 150);      /* text on green fields */
+  --on-green-muted: oklch(0.815 0.025 153);/* secondary text on green, ≥ 4.5:1 */
+  --blue: oklch(0.52 0.09 255);            /* heat-blued steel: second hand, focus */
+  --line: oklch(0.235 0.02 160 / 0.22);    /* hairlines on light */
+  --line-green: oklch(0.945 0.012 150 / 0.28); /* hairlines on green */
+
+  /* type */
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* motion */
+  --ease-out-quart: cubic-bezier(0.23, 1, 0.32, 1);
+
+  color-scheme: light;
+}
+
+/* ---------- reset-ish ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+/* grain: film noise at 2.5% over the whole page, fixed, never on a scrolling container */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+p { margin: 0; text-wrap: pretty; max-width: 68ch; }
+a { color: inherit; }
+
+.tnum { font-variant-numeric: tabular-nums lining-nums; }
+
+/* focus, designed not default */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+.batch :focus-visible, .site-footer :focus-visible {
+  outline-color: var(--on-green);
+}
+
+/* ==========================================================================
+   Header — wordmark + plain text links. No status dot, no CTA button.
+   ========================================================================== */
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.5rem clamp(1.25rem, 5vw, 4.5rem);
+}
+.wordmark {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+.wordmark span { font-size: 0.72em; letter-spacing: 0.22em; }
+.site-nav {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2.25rem);
+  font-size: 0.95rem;
+}
+.site-nav a {
+  text-decoration: none;
+  text-underline-offset: 0.3em;
+  transition: color 140ms var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-nav a:hover { color: var(--green); text-decoration: underline; }
+}
+@media (max-width: 560px) {
+  .site-header { flex-direction: column; gap: 0.75rem; }
+  .site-nav { flex-wrap: wrap; }
+}
+
+/* ==========================================================================
+   Hero — 5/7 split; the dial overruns the hero's lower rule into section 1.
+   ========================================================================== */
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+  padding: clamp(2.5rem, 7vh, 5rem) clamp(1.25rem, 5vw, 4.5rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+.hero-copy { padding-bottom: clamp(3rem, 8vh, 6rem); }
+.hero h1 {
+  font-size: clamp(2.4rem, 1.6rem + 3.4vw, 4.4rem);
+  max-width: 12ch;
+}
+.lede {
+  margin-top: 1.5rem;
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  color: var(--muted);
+  max-width: 46ch;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 2.25rem;
+}
+.hero-note {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  max-width: 40ch;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.72em 1.35em;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  transition: background-color 140ms var(--ease-out-quart),
+              color 140ms var(--ease-out-quart),
+              border-color 140ms var(--ease-out-quart),
+              transform 140ms var(--ease-out-quart);
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--green); border-color: var(--green); color: var(--on-green); }
+.btn-ghost { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: var(--green-deep); border-color: var(--green-deep); }
+  .btn-ghost:hover { background: var(--ink); color: var(--bg); }
+}
+
+/* ---------- the dial: the signature object ---------- */
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -56px; /* grid break: crosses the hero rule into section 1.
+                           Was -90px, which pushed the caption riding below it far enough from
+                           the dial to read as an orphan; 56px still crosses, and holds the pair together. */
+  position: relative;
+  z-index: 2;
+}
+.dial-wrap { margin: 0; text-align: center; }
+.dial-wrap figcaption {
+  /* The dial deliberately overhangs the hero rule by 56px (grid break). The caption rides that
+     same overhang, so it must clear the rule by as much — otherwise the hairline cuts through
+     its last line, which reads as a rendering bug rather than as a deliberate crossing. */
+  margin-top: calc(1.4rem + 56px);
+  font-size: 0.88rem;
+  color: var(--muted);
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+.dial {
+  --dial-ink: oklch(0.93 0.015 150);
+  position: relative;
+  width: min(38vw, 430px);
+  min-width: 260px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border-radius: 50%;
+  /* real light: cool highlight upper-left, deep falloff lower-right — no glow */
+  background: radial-gradient(circle at 34% 28%,
+              oklch(0.42 0.07 157) 0%,
+              oklch(0.34 0.065 158) 46%,
+              oklch(0.26 0.05 160) 100%);
+  box-shadow:
+    inset 0 2px 5px oklch(1 0 0 / 0.10),
+    inset 0 -22px 44px oklch(0.17 0.03 162 / 0.55),
+    0 34px 60px -24px oklch(0.22 0.03 160 / 0.5),
+    0 10px 22px -12px oklch(0.22 0.03 160 / 0.4);
+}
+.dial-ticks-minute,
+.dial-ticks-hour {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.dial-ticks-minute {
+  background: repeating-conic-gradient(from 0deg,
+    var(--dial-ink) 0deg 0.45deg, transparent 0.45deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 81%, #000 81.5% 90.5%, transparent 91%);
+  mask: radial-gradient(closest-side, transparent 81%, #000 81.5% 90.5%, transparent 91%);
+  opacity: 0.55;
+}
+.dial-ticks-hour {
+  background: repeating-conic-gradient(from 0deg,
+    var(--dial-ink) 0deg 1.1deg, transparent 1.1deg 30deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 76%, #000 76.5% 90.5%, transparent 91%);
+  mask: radial-gradient(closest-side, transparent 76%, #000 76.5% 90.5%, transparent 91%);
+  opacity: 0.95;
+}
+.dial-brand {
+  position: absolute;
+  top: 24%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: clamp(0.9rem, 2vw, 1.15rem);
+  letter-spacing: 0.28em;
+  color: var(--dial-ink);
+  max-width: none;
+}
+.dial-brand span { font-size: 0.62em; letter-spacing: 0.34em; opacity: 0.75; }
+.dial-serial {
+  position: absolute;
+  bottom: 22%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+  letter-spacing: 0.18em;
+  color: var(--dial-ink);
+  opacity: 0.7;
+  max-width: none;
+}
+.hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 3px;
+  will-change: transform;
+}
+.hand-hour {
+  width: 6px;
+  height: 23%;
+  margin-left: -3px;
+  background: var(--dial-ink);
+}
+.hand-minute {
+  width: 4px;
+  height: 34%;
+  margin-left: -2px;
+  background: var(--dial-ink);
+}
+.hand-second {
+  width: 2px;
+  height: 40%;
+  margin-left: -1px;
+  background: var(--blue);
+}
+.hand-second::after { /* counterweight */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -14%;
+  width: 6px;
+  height: 14%;
+  margin-left: -3px;
+  border-radius: 3px;
+  background: var(--blue);
+}
+.dial-cap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--dial-ink);
+  box-shadow: 0 0 0 3px oklch(0.25 0.045 160 / 0.9);
+}
+
+/* ==========================================================================
+   Sections — rhythm varies with weight; openings rotate per taste.md §1.
+   ========================================================================== */
+.section {
+  padding: clamp(4rem, 11vh, 7.5rem) clamp(1.25rem, 5vw, 4.5rem);
+  scroll-margin-top: 2rem;
+}
+.section-open h2 {
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3.2rem);
+}
+.rule {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0 0 1.75rem;
+}
+
+/* ---------- Section 1 · The watch (opens: hairline rule + heading) ---------- */
+.watch { padding-top: calc(clamp(4rem, 11vh, 7.5rem) + 70px); } /* clears the dial overrun */
+.watch-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  margin-top: clamp(2rem, 5vh, 3.5rem);
+}
+.watch-prose { position: relative; }
+.watch-prose p + p { margin-top: 1.1em; }
+.margin-note {
+  float: none;
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 0.9rem;
+  margin-bottom: 1.75rem;
+  max-width: 30ch;
+}
+/* The note hangs outside its column — the second half of the grid break. Hanging outside the
+   PAGE is a different thing: the section pads to 4.5rem, the note wanted 12.5rem, and it slid
+   off-screen losing a word per line. So the grid indents to make the margin, and the note hangs
+   into that — outside its column, inside the viewport. */
+@media (min-width: 1200px) {
+  .watch-grid { padding-left: 11rem; }
+  .margin-note {
+    position: absolute;
+    left: -11rem;
+    top: 0.2rem;
+    width: 9.5rem;
+    margin-bottom: 0;
+  }
+}
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--serif); /* data stays in the display voice, no mono */
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+}
+.spec-table caption {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-bottom: 0.9rem;
+}
+.spec-table th, .spec-table td {
+  text-align: left;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
+  vertical-align: baseline;
+}
+.spec-table tr:last-child th, .spec-table tr:last-child td {
+  border-bottom: 1px solid var(--line);
+}
+.spec-table th {
+  font-weight: 500;
+  color: var(--muted);
+  width: 30%;
+  padding-right: 1.5rem;
+}
+.spec-table td { font-variant-numeric: tabular-nums lining-nums; }
+
+/* ---------- Section 2 · The batch (opens: full-bleed green field) ---------- */
+.batch {
+  background: var(--green);
+  color: var(--on-green);
+}
+.batch .section-open h2 { color: var(--on-green); }
+.section-lede {
+  margin-top: 1.1rem;
+  color: var(--on-green-muted);
+  font-size: 1.05rem;
+}
+.batch-steps {
+  list-style: none;
+  margin: clamp(2.5rem, 6vh, 4rem) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+}
+.batch-steps li {
+  border-top: 1px solid var(--line-green);
+  padding-top: 1.4rem;
+}
+.step-no {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 1.8rem + 3vw, 4rem);
+  line-height: 1;
+  color: var(--on-green);
+}
+.batch-steps h3 {
+  margin-top: 1.1rem;
+  font-size: 1.3rem;
+}
+.batch-steps p {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  color: var(--on-green-muted);
+}
+@media (max-width: 900px) {
+  .batch-steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .batch-steps { grid-template-columns: 1fr; }
+}
+
+/* ---------- Section 3 · Ownership (opens: oversized first word) ---------- */
+.overword {
+  display: block;
+  font-size: clamp(3.6rem, 2rem + 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--green);
+}
+.ownership-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+}
+.ownership-grid h3 { font-size: 1.35rem; }
+.ownership-grid p {
+  margin-top: 0.8rem;
+  font-size: 0.98rem;
+  color: var(--muted);
+}
+.ownership-grid > div { border-top: 1px solid var(--line); padding-top: 1.4rem; }
+@media (max-width: 820px) {
+  .ownership-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Footer — a real place: sitemap, contact, legal. No scroll instruction.
+   ========================================================================== */
+.site-footer {
+  background: var(--green-deep);
+  color: var(--on-green);
+  padding: clamp(3rem, 8vh, 5.5rem) clamp(1.25rem, 5vw, 4.5rem) 2rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 4fr 2fr 4fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-bottom: 2.5rem;
+}
+.footer-brand p { color: var(--on-green-muted); margin-top: 1rem; max-width: 38ch; }
+.footer-brand .wordmark { color: var(--on-green); }
+.footer-heading {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-green);
+  margin: 0 0 1rem;
+}
+.footer-nav { display: flex; flex-direction: column; gap: 0.55rem; align-items: flex-start; }
+.footer-nav a {
+  text-decoration: none;
+  color: var(--on-green-muted);
+  text-underline-offset: 0.3em;
+  transition: color 140ms var(--ease-out-quart);
+}
+.footer-contact p { color: var(--on-green-muted); font-size: 0.98rem; }
+.footer-contact a {
+  color: var(--on-green);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color 140ms var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .footer-nav a:hover, .footer-contact a:hover { color: var(--on-green); text-decoration: underline; }
+}
+.footer-legal {
+  border-top: 1px solid var(--line-green);
+  padding-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  font-size: 0.82rem;
+  color: var(--on-green-muted);
+}
+@media (max-width: 820px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Responsive — hero and watch grid collapse to one column, dial above copy.
+   ========================================================================== */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding-top: 2rem; }
+  /* Stacked, the dial sits ABOVE the copy, so an overhang lands the caption on top of the
+     headline instead of crossing a rule. One column, no overhang. */
+  .hero-visual { order: -1; margin-bottom: 0; }
+  .dial-wrap figcaption { margin-top: 1.2rem; }
+  .dial { width: min(64vw, 360px); }
+  .hero h1 { max-width: 16ch; }
+  .watch-grid { grid-template-columns: 1fr; }
+  .margin-note { position: static; width: auto; max-width: 44ch; }
+}
+
+/* ==========================================================================
+   Motion — two reveal families, IO-driven, enhance visible defaults only.
+   Durations 550–700ms: marketing-sequence pacing (motion.md allows longer
+   than 300ms for these; written reason: a slow bench, not a snappy app).
+   ========================================================================== */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+html.js .reveal.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 600ms var(--ease-out-quart),
+              transform 600ms var(--ease-out-quart);
+}
+html.js .rule {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+html.js .section-open.in .rule,
+html.js .rule.in {
+  transform: scaleX(1);
+  transition: transform 700ms var(--ease-out-quart);
+}
+/* stagger inside family 2 for the batch procedure, 50ms per step */
+html.js .batch-steps .reveal:nth-child(2).in { transition-delay: 50ms; }
+html.js .batch-steps .reveal:nth-child(3).in { transition-delay: 100ms; }
+html.js .batch-steps .reveal:nth-child(4).in { transition-delay: 150ms; }
+html.js .ownership-grid .reveal:nth-child(2).in { transition-delay: 50ms; }
+html.js .ownership-grid .reveal:nth-child(3).in { transition-delay: 100ms; }
+
+/* ==========================================================================
+   Reduced motion — gentler, not zero: opacity stays, movement goes.
+   The dial's sweep is handled in JS (steps once per second instead).
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .reveal,
+  html.js .rule {
+    transform: none !important;
+  }
+  html.js .reveal.in,
+  html.js .section-open.in .rule,
+  html.js .rule.in {
+    transition: opacity 200ms ease;
+  }
+  .btn, .site-nav a, .footer-nav a, .footer-contact a {
+    transition-duration: 0ms;
+  }
+}

@@ -171,13 +171,17 @@ async function icons() {
 // ---------------------------------------------------------------- Google Fonts
 const GF_BANNED = ['Inter', 'Space Grotesk', 'Instrument Serif', 'Playfair Display'];
 async function fonts() {
-  const cacheFile = join(outDir, '.gf-metadata.json');
+  // Not inside --out: that just relocates 1.5MB from your cwd into your shipped assets tree.
+  const cacheFile = join(process.env.TEMP || process.env.TMPDIR || '.', 'auteur-gf-metadata.json');
   let meta;
   if (existsSync(cacheFile)) meta = JSON.parse(await readFile(cacheFile, 'utf8'));
   else {
     meta = JSON.parse((await text('https://fonts.google.com/metadata/fonts')).replace(/^\)\]\}'\n?/, ''));
-    await mkdir(outDir, { recursive: true });
-    await writeFile(cacheFile, JSON.stringify(meta));       // 2.6MB; fetch it once per project
+    // --list promises to write nothing; a 2.6MB metadata cache is still something.
+    if (!listOnly) {
+      await mkdir(outDir, { recursive: true });
+      await writeFile(cacheFile, JSON.stringify(meta));     // fetch it once per project
+    }
   }
   // Google's own category names overlap ("Sans Serif" contains "serif"), so a plain substring
   // match on "serif" happily returns Noto Sans Display. Resolve the category first, filter on it,
@@ -189,18 +193,32 @@ async function fonts() {
   const wantVariable = ws.some(w => w === 'variable' || w === 'vf');
   const rest = ws.filter(w => !CAT[w] && w !== 'variable' && w !== 'vf');
 
-  const pool = (meta.familyMetadataList || []).filter(f => (!wantCat || f.category === wantCat) && (!wantVariable || (f.axes || []).length));
+  // "Display", "Mono" and "Sans" are Google categories AND parts of real family names, so a query
+  // like "Playfair Display" was read as a category and filtered its own family out. If the category
+  // reading finds nothing, the word was part of a name — drop the constraint and search again.
+  const inPool = cat => (meta.familyMetadataList || []).filter(f => (!cat || f.category === cat) && (!wantVariable || (f.axes || []).length));
+  let pool = inPool(wantCat);
+  if (wantCat && !pool.some(f => rest.some(w => f.family.toLowerCase().includes(w)))) {
+    const byName = inPool(null).filter(f => rest.some(w => f.family.toLowerCase().includes(w)));
+    if (byName.length) pool = byName;
+  }
   const ranked = pool
     .map(f => {
       const name = f.family.toLowerCase();
-      let score = (wantCat ? 1 : 0) + rest.reduce((n, w) => n + (name.includes(w) ? 2 : 0), 0);
-      if ((f.axes || []).length) score += 0.5;              // variable axes are worth having
+      // A family must actually match something before it is a candidate. Scoring alone did not
+      // enforce that — the "keep banned families listed but demoted" filter let every family
+      // through, so `font "Bodoni Moda"` downloaded Roboto.
+      const hits = rest.reduce((n, w) => n + (name.includes(w) ? 1 : 0), 0);
+      const matched = hits > 0 || (wantCat && !rest.length);
+      let score = (wantCat ? 1 : 0) + hits * 2;
+      if (name === rest.join(' ')) score += 3;               // exact family name wins outright
+      if ((f.axes || []).length) score += 0.5;               // variable axes are worth having
       // Google's popularity ranking is exactly what makes a font the AI default; a banned family
       // must never be the top suggestion, but it stays listed (flagged) rather than hidden.
       if (GF_BANNED.includes(f.family)) score -= 100;
-      return { f, score };
+      return { f, score, matched };
     })
-    .filter(x => x.score > -99)
+    .filter(x => x.matched)
     .sort((a, b) => b.score - a.score || (a.f.popularity || 9999) - (b.f.popularity || 9999))
     .slice(0, limit);
   if (!ranked.length) console.error(`[source] no Google font matched. Say the shape: "serif variable", "mono", "display grotesk".`);
@@ -360,7 +378,8 @@ await writeFile(ledgerPath, prev + block, 'utf8');
 
 console.log(`\n=== source (${kind}) ===`);
 console.log(`found   : ${items.length} for "${query}"`);
-if (!listOnly) console.log(`written : ${files} files, ${(bytes / 1048576).toFixed(1)}MB → ${join(outDir, kind)}`);
+const cached = items.reduce((n, it) => n + it.files.filter(f => f.skipped).length, 0);
+if (!listOnly) console.log(`written : ${files} new${cached ? ` + ${cached} already on disk` : ''}, ${(bytes / 1048576).toFixed(1)}MB → ${join(outDir, kind)}`);
 const needsCredit = items.filter(i => i.attribution);
 if (needsCredit.length) console.log(`⚠ credit: ${needsCredit.length} asset(s) REQUIRE visible attribution — see the ledger`);
 if (kind === 'video') console.log(`⚠ stock video is ambient/fallback material. If your peak scene is stock, you have no peak scene.`);

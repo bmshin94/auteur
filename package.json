@@ -1,6 +1,6 @@
 {
   "name": "auteur",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "The Claude Code skill that directs a website like a film.",
   "type": "module",
   "license": "MIT",
@@ -15,7 +15,8 @@
     "shoot": "node scripts/shoot.mjs",
     "refscout": "node scripts/refscout.mjs",
     "moodboard": "node scripts/moodboard.mjs",
-    "source": "node scripts/source.mjs"
+    "source": "node scripts/source.mjs",
+    "systemscan": "node scripts/systemscan.mjs"
   },
   "devDependencies": {
     "playwright": "^1.62.1"

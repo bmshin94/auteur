@@ -19,7 +19,7 @@ director would respect.
 
 A skeptic opens the repo. In ten seconds they should be able to:
 
-1. See **seven live interactive sites** the skill actually built (not
+1. See **nine live interactive sites** the skill actually built (not
    screenshots — real WebGL you can drag).
 2. Run **one command** (`slopscan`) against any of them and watch it pass, or
    point it at typical AI slop and watch it fail.
@@ -74,5 +74,5 @@ several of them mechanically:
   throughput figure. There is no fabricated metrics table anywhere in this
   repo. The only quantitative claim is `slopscan` results (0 fails / 0 warns),
   which you can reproduce in one command.
-- **No "award-winning."** The seven showcase sites are the argument. Judge them
+- **No "award-winning."** The nine showcase sites are the argument. Judge them
   yourself.

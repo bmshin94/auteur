@@ -1,9 +1,9 @@
 ---
 name: auteur
-description: Design and build complete, distinctive web experiences from scratch — both standard product/marketing pages with award-level craft and cinematic scroll-directed "wow" sites where the page is directed like a film, with AI-generated visual assets (consistent keyframe images, scroll-scrubbed sequences, WebGL displacement transitions between two generated frames, locally generated video via first→last-frame chains, and an optional ambient score). Use whenever the user wants to create or redesign a landing page, website, hero section, portfolio, promo or product page; asks for scroll animations, storytelling pages, or a site that feels like a movie; or says "make it beautiful", "make it wow", "cinematic", "сделай красиво", "вау-сайт", "кинематографичный сайт", "сделай лендинг" — even if they don't name a technique. Includes asset generation via local CLIs, an executable anti-slop linter, and a screenshot verification loop. Not for polishing an existing UI built by someone else (use impeccable for that) and not for backend-only tasks.
-version: 1.1.0
+description: Design and build complete, distinctive web experiences from scratch — both standard product/marketing pages with award-level craft and cinematic scroll-directed "wow" sites where the page is directed like a film, with AI-generated visual assets (consistent keyframe images, scroll-scrubbed sequences, WebGL displacement transitions between two generated frames, locally generated video via first→last-frame chains, and an optional ambient score). Use whenever the user wants to create or redesign a landing page, website, hero section, portfolio, promo or product page; when they want a multi-screen product built as one coherent design system — an app, dashboard, admin, settings or onboarding flow, a docs site with real navigation — with every component, state and route in one style ("собери дашборд", "сделай админку", "нужно приложение на несколько экранов", "design system"); asks for scroll animations, storytelling pages, or a site that feels like a movie; or says "make it beautiful", "make it wow", "cinematic", "сделай красиво", "вау-сайт", "кинематографичный сайт", "сделай лендинг" — even if they don't name a technique. Includes asset generation via local CLIs, an executable anti-slop linter, and a screenshot verification loop. Not for polishing an existing UI built by someone else (use impeccable for that) and not for backend-only tasks.
+version: 1.2.0
 user-invocable: true
-argument-hint: "[build|direct|edit|audit|recon] <brief or target>"
+argument-hint: "[build|direct|system|edit|audit|recon] <brief or target>"
 allowed-tools:
   - Bash(node *)
   - Bash(agy *)
@@ -61,13 +61,14 @@ A ban may be overridden only through a written `auteur-allow` (see Verification)
 Read the argument / brief and route:
 
 1. **`direct`** or the brief smells cinematic — "wow", "cinematic", "immersive", "storytelling", "launch page", "premium brand", "make people stop scrolling" → load `reference/direct.md` and follow its phases. This is the flagship register.
-2. **`build`** or the brief is a conventional surface — product UI, dashboard-adjacent marketing, docs, blog, straightforward landing → load `reference/build.md`.
-3. **`edit`** or the request modifies a page this skill built (the project contains `design/DESIGN.md`) — "add a section", "change the pricing", "swap the hero copy" → read `design/DESIGN.md` FIRST and follow its Editing protocol: reuse its tokens, section-opening patterns, and motion families; after the change run slopscan and re-shoot the affected viewports. An edit that ignores DESIGN.md is a regression even if it looks good in isolation.
-4. **`recon <brief>`** or the ask is only for reference material — "найди референсы", "собери мудборд", "what's the state of the art for X sites" → load `reference/recon.md` and run just that phase: scout live sites, build the moodboard, hand back `design/refs/REFERENCES.md` (with the `steal:` lines filled) and `design/moodboard/contact-sheet.png` (with the read filled). No commit-sheet, no build.
-5. **`audit <path-or-url>`** → load `reference/verify.md` and run the verification pipeline on an auteur-built page. If the target is an existing UI auteur didn't build and the user wants it *polished* rather than *rebuilt*, say that `/impeccable` is the right tool and offer to continue only if they want a rebuild.
-6. **Ambiguous** (e.g. plain "сделай лендинг") → ask exactly one question: "Обычный отличный лендинг или кино-режим со scroll-режиссурой и генерацией ассетов?" Then route. Don't ask anything else yet — each register runs its own intake.
+2. **`build`** or the brief is ONE conventional surface — a marketing page, a landing, a single product page → load `reference/build.md`.
+3. **`system`** or the brief has **more than one screen that must feel like one product** — app, dashboard, admin, settings, onboarding, a docs or content site with real navigation → load `reference/system.md`. The unit of design becomes the component × state, the failure mode becomes drift rather than boredom, and there is deliberately **no peak**. If you are already in `build` and a second screen appears, stop and switch: half a system is worse than either.
+4. **`edit`** or the request modifies a page this skill built (the project contains `design/DESIGN.md`) — "add a section", "change the pricing", "swap the hero copy" → read `design/DESIGN.md` FIRST and follow its Editing protocol: reuse its tokens, section-opening patterns, and motion families; after the change run slopscan and re-shoot the affected viewports. An edit that ignores DESIGN.md is a regression even if it looks good in isolation.
+5. **`recon <brief>`** or the ask is only for reference material — "найди референсы", "собери мудборд", "what's the state of the art for X sites" → load `reference/recon.md` and run just that phase: scout live sites, build the moodboard, hand back `design/refs/REFERENCES.md` (with the `steal:` lines filled) and `design/moodboard/contact-sheet.png` (with the read filled). No commit-sheet, no build.
+6. **`audit <path-or-url>`** → load `reference/verify.md` and run the verification pipeline on an auteur-built page. If the target is an existing UI auteur didn't build and the user wants it *polished* rather than *rebuilt*, say that `/impeccable` is the right tool and offer to continue only if they want a rebuild.
+7. **Ambiguous** (e.g. plain "сделай лендинг") → ask exactly one question: "Обычный отличный лендинг или кино-режим со scroll-режиссурой и генерацией ассетов?" Then route. (Multi-screen briefs are not ambiguous — they are `system`.) Don't ask anything else yet — each register runs its own intake.
 
-Both registers share phase zero, and its centre of gravity is the commit-sheet. Order differs: **build** runs recon → commit-sheet → mockup; **direct** runs recon → storyboard → commit-sheet → mockup, because the film's scenes are what the six decisions get made *about*. Either way nothing is coded before the sheet is full.
+All three registers share phase zero, and its centre of gravity is the commit-sheet. Order differs: **build** runs recon → commit-sheet → mockup; **direct** runs recon → storyboard → commit-sheet → mockup, because the film's scenes are what the six decisions get made *about*; **system** runs recon → system-sheet (route map + component inventory) → commit-sheet → mockup, because the six decisions get made about a product, not a page. Either way nothing is coded before the sheet is full.
 
 ## The commit-sheet (before any code, both registers)
 
@@ -84,13 +85,13 @@ Gate: every field filled with a specific, non-default answer. An empty or generi
 
 ## Phases at a glance
 
-| Phase | build register | direct register | Reference to load |
-|---|---|---|---|
-| 0 | recon → commit-sheet → hero mockup gate | recon → screenplay (STORYBOARD.md) → commit-sheet → hero mockup gate | `recon.md`, then `direct.md` / `build.md` |
-| 1 | — | asset production (generate → edit → optimize) | `assets.md` |
-| 2 | build the page | assemble the film (smooth scroll first, hero, scenes top-down) | `build.md` + `taste.md` + `motion.md` / `scroll-cinema.md` |
-| 3 | verify | verify + CINEMA-QA.md | `verify.md` |
-| 4 | lock the style: fill `design/DESIGN.md` | same | `templates/DESIGN.md` |
+| Phase | build register | direct register | system register | Reference to load |
+|---|---|---|---|---|
+| 0 | recon → commit-sheet → hero mockup gate | recon → screenplay (STORYBOARD.md) → commit-sheet → hero mockup gate | recon → SYSTEM-SHEET.md (routes + component inventory + states) → commit-sheet → mockup gate | `recon.md`, then `build.md` / `direct.md` / `system.md` |
+| 1 | — | asset production (generate → edit → optimize) | — (source icons/fonts via `source.mjs`) | `assets.md` |
+| 2 | build the page | assemble the film (smooth scroll first, hero, scenes top-down) | tokens → the shell → screens in traffic order → every state | `build.md` / `scroll-cinema.md` / `system.md` + `taste.md` + `motion.md` |
+| 3 | verify | verify + CINEMA-QA.md | verify + **systemscan across every route** | `verify.md` |
+| 4 | lock the style: fill `design/DESIGN.md` | same | same, but DESIGN.md is the **component contract** | `templates/DESIGN.md` |
 
 The hero mockup gate (one static throwaway screen, screenshotted and approved before anything else is built) is the cheapest moment to change art direction — details in each register's reference. `design/DESIGN.md` is the style contract that makes every later edit stay in style (the `edit` route reads it first).
 
@@ -102,6 +103,7 @@ Never skip a gate because the intermediate result "looks done". The gates exist 
 - `reference/taste.md` — the full anti-slop system: extended bans with replacements, second-order category reflex table, color strategy tiers, typography pairing, copy rules. Load for any visual decision-making.
 - `reference/motion.md` — the motion school: when to animate, easing/duration/spring numbers, performance rules, motion budget, sound policy. Load before writing any animation.
 - `reference/build.md` — the standard register process. Load when routed to build.
+- `reference/system.md` — the **multi-screen register**: route map, the component inventory as a gate, the state matrix (empty/loading/error are not edge cases), density rules, the no-peak rule, and `scripts/systemscan.mjs` — which crawls every route, reads what the browser actually painted, fails a control type over its declared variant budget, presses Tab to catch controls with no visible focus state, and renders one tile per rendered variant so drift is visible as well as counted. Load when routed to system.
 - `reference/direct.md` — the cinematic register: screenplay contract, scene-sheets, dramaturgy, assembly order. Load when routed to direct.
 - `reference/assets.md` — the media crew and routing (agy / codex / grok-4.5 for images, grok for video, MiniMax for score, ffmpeg), **§0.5 source-vs-generate** (`scripts/source.mjs`: CC0 glTF meshes, HDRIs and PBR materials from Poly Haven, icons, fonts, CC images, stock video — with a licence ledger, because generation cannot make geometry or an IBL and stock video must never be the peak), the consistency trick (edit frame A into frame B), local video via the first→last-frame chain, generated elements/mockups, the ambient score, the degradation ladder, and asset caching. Load during direct phase 1.
 - `reference/scroll-cinema.md` — working code recipes: scroll-scrubbed video, canvas sequences, GSAP+Lenis foundation, CSS scroll-driven animations, text reveals, the two-keyframe WebGL displacement transition, view transitions, ambient audio, and the cinematic transition library (wipe, curtain, letterbox, shutter, depth parallax). Load during assembly.

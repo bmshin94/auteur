@@ -4,7 +4,9 @@
  * (scroll state-machine, audio-reactive, 2.5D composite, scrubbed video).
  * Screenshots (shoot.mjs) are blind to time; this scrolls the page under CPU throttle and asserts
  * FPS, long-tasks, audio gating, and WebGL console health.
- * Usage: node motionqa.mjs <url> [--throttle 4] [--min-fps 50] [--max-longtask 50] [--json]
+ * Usage: node motionqa.mjs <url> [--headed]
+ * --headed is not optional for a real number on any GPU-dependent page, and a headless run
+ * reporting 0 console errors is not a pass — a headed run has caught a 404 the headless one missed. [--throttle 4] [--min-fps 50] [--max-longtask 50] [--json]
  * ponytail: reuses the playwright install shoot.mjs already needs; no new deps.
  */
 import { chromium } from 'playwright';
@@ -14,7 +16,7 @@ const url = argv.find(a => !a.startsWith('-'));
 const opt = (name, def) => { const i = argv.indexOf('--' + name); return i >= 0 && argv[i + 1] ? +argv[i + 1] : def; };
 const jsonMode = argv.includes('--json');
 if (!url) {
-  process.stderr.write('Usage: node motionqa.mjs <url> [--throttle 4] [--min-fps 50] [--max-longtask 50] [--json]\n');
+  process.stderr.write('Usage: node motionqa.mjs <url> [--headed] [--throttle 4] [--min-fps 50] [--max-longtask 50] [--json]\n');
   process.exit(2);
 }
 const THROTTLE = opt('throttle', 4), MIN_FPS = opt('min-fps', 50), MAX_LT = opt('max-longtask', 50);
@@ -76,7 +78,7 @@ const fails = [], advisories = [];
 // Under headless+canvas those two are ADVISORIES (run --headed / on-device for a real number); the
 // rest (audio gating, console/WebGL errors) are GPU-independent and stay hard fails.
 const softWebgl = hasCanvas && !headed;
-const perf = (cond, msg) => { if (cond) (softWebgl ? advisories : fails).push(msg + (softWebgl ? ' [headless software-WebGL — run --headed for a real number]' : '')); };
+const perf = (cond, msg) => { if (cond) (softWebgl ? advisories : fails).push(msg + (softWebgl ? ` [headless software ${hasCanvas ? 'WebGL' : 'rasterization'} — run --headed for a real number]` : '')); };
 perf(minFps < MIN_FPS, `minFps ${minFps.toFixed(0)} < ${MIN_FPS} @${THROTTLE}x throttle`);
 perf(maxLongTask > MAX_LT, `long task ${maxLongTask.toFixed(0)}ms > ${MAX_LT}ms`);
 if (audioAutoplaying) fails.push('audio/video playing with sound on load (must be gesture-gated)');

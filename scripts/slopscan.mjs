@@ -301,19 +301,32 @@ function checkEmDashCopy(text, ext, findings) {
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<title[\s\S]*?<\/title>/gi, ' ')
     .replace(/<meta[^>]*>/gi, ' ')
+    // Headings, terms and captions are LABELS, not sentences. "-200m — The Blue" is a dash doing
+    // exactly the job a dash should do, and counting it made the rule argue against good typography.
+    .replace(/<(h[1-6]|dt|summary|figcaption|legend|caption|th)\b[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/(^|\s)\/\/[^\n]*/g, ' ')
     .replace(/<[^>]+>/g, ' ');
 
-  const dashes = (prose.match(/—/g) || []).length;
+  // Entity-encoded dashes render the identical glyph. Counting only the literal character meant the
+  // rule was defeated by `&mdash;` — the exact dodge the comment above says the old advice suffered
+  // from. Decode first, then count.
+  const decoded = prose
+    .replace(/&mdash;|&#8212;|&#[xX]2014;/g, '—')
+    .replace(/&ndash;|&#8211;|&#[xX]2013;/g, '–')
+    .replace(/&hellip;|&#8230;/g, '…')
+    .replace(/&nbsp;|&#160;/g, ' ');
+  const dashes = (decoded.match(/—/g) || []).length;
   if (dashes < 3) return;
-  const sentences = (prose.match(/[.!?]["')\]]?(\s|$)/g) || []).length || 1;
-  const words = (prose.match(/\S+/g) || []).length || 1;
+  const sentences = (decoded.match(/[.!?]["')\]]?(\s|$)/g) || []).length || 1;
+  const words = (decoded.match(/\S+/g) || []).length || 1;
   const perSentence = dashes / sentences;
   const per100w = (dashes / words) * 100;
-  // Two independent ways to be em-dash-heavy: one per two sentences, or >1 per 100 words.
-  if (perSentence < 0.5 && per100w < 1) return;
+  // One criterion, because the ban is about the dash replacing sentence structure: if more than
+  // half your sentences carry an em dash, it is structural. A per-100-words test looked reasonable
+  // and flagged prose with one dash every four sentences, which is just writing.
+  if (perSentence < 0.5) return;
 
   const lineAt = makeLineAt(text);
   const first = text.indexOf('—');

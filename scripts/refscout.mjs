@@ -54,8 +54,9 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
  * frequently never fire. Commit + a timed settle is the only navigation that survives them.
  * Returns false when DOMContentLoaded never fired — those pages need freeze() before capture.
  */
-async function open(page, url, settle = 7000) {
-  await page.goto(url, { waitUntil: 'commit', timeout: 30_000 });
+async function open(page, url, settle = 7000, onStatus) {
+  const resp = await page.goto(url, { waitUntil: 'commit', timeout: 30_000 });
+  onStatus?.(resp?.status?.() ?? 0);
   const dcl = await page.waitForLoadState('domcontentloaded', { timeout: 12_000 }).then(() => true).catch(() => false);
   await page.waitForTimeout(dcl ? settle : settle + 5000); // no DCL → give hydration longer
   return dcl;
@@ -125,8 +126,9 @@ async function fingerprint(ctx, url) {
     try { const t = await res.text(); jsBytes += t.length; js.push(t); } catch {}
   });
 
+  let httpStatus = 0;
   try {
-    const dcl = await open(page, url, 8000);
+    const dcl = await open(page, url, 8000, s => { httpStatus = s; });
     // one scroll pass so pinning / lazy scenes actually initialise before we look
     await page.evaluate(() => window.scrollTo({ top: innerHeight * 1.6, behavior: 'instant' }));
     await page.waitForTimeout(2500);
@@ -149,6 +151,19 @@ async function fingerprint(ctx, url) {
           }
         } catch {}
       }
+      // Chromium reports modern colour syntaxes verbatim (`lab(48.5 0 0)`, `oklch(...)`), which is
+      // unreadable as a palette. Round-trip every value through a canvas so the report shows a
+      // colour a human can picture, keeping the original alongside.
+      const cx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+      const toHex = v => {
+        try {
+          cx.clearRect(0, 0, 1, 1); cx.fillStyle = '#000'; cx.fillStyle = v;
+          cx.fillRect(0, 0, 1, 1);
+          const [r, g, b, a] = cx.getImageData(0, 0, 1, 1).data;
+          const hex = '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
+          return a < 250 ? `${hex}@${(a / 255).toFixed(2)}` : hex;
+        } catch { return null; }
+      };
       // sample the real palette from what is painted, not from the token file
       const colors = {};
       for (const el of all) {
@@ -158,7 +173,10 @@ async function fingerprint(ctx, url) {
           colors[c] = (colors[c] || 0) + 1;
         }
       }
-      const palette = Object.entries(colors).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([c, n]) => `${c} ×${n}`);
+      const palette = Object.entries(colors).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([c, n]) => {
+        const hex = toHex(c);
+        return hex && !/^(#|rgb)/.test(c) ? `${hex} (${c}) ×${n}` : `${hex || c} ×${n}`;
+      });
       // The display face is the biggest thing actually painted, not the first h1 — a hidden or
       // fallback-styled heading reports whatever the CSS cascade left there and will happily
       // claim an awwwards winner ships Inter. Measure instead: largest visible rendered text.
@@ -220,7 +238,11 @@ async function fingerprint(ctx, url) {
     // Chrome's unstyled body is Times New Roman with zero web fonts loaded; a real site that
     // merely leaves body at the default still has @font-face rules from its stylesheet.
     const unstyled = /^"?Times New Roman/.test(dom.bodyFont) && !dom.fontFaces.length;
-    f.thin = dom.sheets === 0 || unstyled;
+    // An error page has a title, a palette and a page shape, and will happily be written up as a
+    // reference with a blank `steal:` line waiting to be filled. It is not a design.
+    f.httpStatus = httpStatus;
+    f.errorPage = httpStatus >= 400 || /^\s*(4\d\d|5\d\d)|bad gateway|not found|forbidden|service unavailable|internal server error/i.test(dom.title || '');
+    f.thin = dom.sheets === 0 || unstyled || f.errorPage;
 
     // Screenshots are best-effort on purpose: a capture that fails must never throw away
     // a fingerprint we already paid for.
@@ -329,7 +351,7 @@ lines.push('');
 lines.push('| # | site | stack detected | page shape | mechanics |');
 lines.push('|---|---|---|---|---|');
 ok.forEach((r, i) => {
-  const cell = r.thin ? '_no capture — see below_' : null;
+  const cell = r.errorPage ? '_error page — not a design_' : r.thin ? '_no capture — see below_' : null;
   lines.push(`| ${i + 1} | [${r.name || r.url.replace(/^https?:\/\//, '')}](${r.url}) | ${cell ?? (r.libs.slice(0, 4).join(', ') || '—')} | ${cell ?? `${r.scrollRatio}× vh, ${r.sections} sections`} | ${cell ?? (r.mechanics.slice(0, 3).join('; ') || '—')} |`);
 });
 lines.push('');
@@ -337,6 +359,11 @@ lines.push('');
 ok.forEach((r, i) => {
   lines.push(`## ${i + 1}. ${r.name || r.title || r.url}`);
   lines.push(`- url: ${r.url}${r.via && r.via !== 'direct' ? `  ·  via ${r.via}` : ''}`);
+  if (r.errorPage) {
+    lines.push(`- ⚠ **NOT A DESIGN** — this URL returned an error page${r.httpStatus >= 400 ? ` (HTTP ${r.httpStatus})` : ''}, title "${r.title}". Nothing here is a reference. Drop it, or find the site's real address.`);
+    lines.push('');
+    return;
+  }
   if (r.thin) {
     lines.push(`- ⚠ **NO CAPTURE** — this site served the headless browser bare HTML and never delivered its CSS/JS (${r.sheets} stylesheets, readyState \`${r.readyState}\`). Any font, colour or stack reading here would be the browser's defaults, so none is reported. Open the URL yourself, or describe it from the gallery write-up — and check the page title above, a dead link from the gallery lands here too.`);
     if (r.shots.length) lines.push(`- unstyled shots (evidence that the capture failed, not a look at the design): ${r.shots.map(s => `\`${s}\``).join(' ')}`);

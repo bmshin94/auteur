@@ -37,6 +37,11 @@ Then **open and look at every frame**. You are looking for what linters cannot s
 
 Console errors and "possibly blank" warnings printed by shoot.mjs are FAILs until explained.
 
+> **`--full` lies about `position: fixed` and stuck `position: sticky`.** A full-page capture
+> composites them at their viewport position, so a fixed bottom nav appears in the middle of the page
+> and a sticky table head appears to overlap row 1. Both look exactly like layout bugs and neither is.
+> Judge fixed and sticky elements from the viewport frames only.
+
 **Interaction smoke-test** (when the page has interactive elements — nav, forms, tabs, mute toggle): drive the real page with playwright (`playwright-cli` skill, or a short script on the same playwright install shoot.mjs uses): click every nav link (lands on the right anchor, header doesn't cover the target), open/close the mobile menu, submit the form empty (inline error appears, nothing explodes), toggle sound if present, tab through the page once (focus visible and in order, ESC closes overlays). Any interaction that throws or dead-ends is a FAIL. Static pages skip this.
 
 ## 2.5 Motion / perf / audio QA (direct register — screenshots are blind to time)
@@ -75,7 +80,7 @@ Console over the whole run: zero errors, zero `THREE.WebGLRenderer: Context Lost
 
 | Check | Threshold | How |
 |---|---|---|
-| Body contrast | ≥4.5:1 (large ≥3:1, placeholders ≥4.5:1) | devtools / axe on final colors |
+| Body contrast | ≥4.5:1 (large ≥3:1, placeholders ≥4.5:1), **measured in every state, not just the default** — an error or stale view that dims its own text is the usual way this fails, and every linter reads the undimmed colour | devtools / axe on final colors, then again with each degraded state applied |
 | LCP | <2.5s (throttled Fast 3G / 4× CPU) | Lighthouse |
 | CLS | <0.1 | Lighthouse |
 | INP | <200ms | Lighthouse / manual scroll+click |
@@ -90,10 +95,26 @@ Console over the whole run: zero errors, zero `THREE.WebGLRenderer: Context Lost
 | No-JS | content readable, page navigable | disable JS, reload |
 | Fallback payload | every degraded cut still carries the peak's *information*, not just a picture of it | reduced-motion / no-JS / no-WebGL, at 390 too — a callout panel hidden by a mobile breakpoint deletes the payload while the desktop screenshots look fine |
 
+## 3.5 systemscan (system register — one page cannot show you drift)
+
+A product fails differently from a page: every screen looks fine alone while the fourth button
+variant quietly appears on screen seven. Run the cross-route gate over **every** route, not a sample:
+
+```bash
+node scripts/systemscan.mjs http://localhost:3000 --routes /,/settings,/billing,/team
+```
+
+It reads what the browser actually painted, fails a control type over its declared variant budget,
+presses Tab to catch any control that paints identically focused and unfocused, and writes
+`components.png` — one tile per rendered variant. Look at that sheet the way the direct register
+makes you watch your own film: a tile that looks foreign is drift your eyes caught before the
+numbers did. Full doctrine in `system.md`.
+
 ## 4. Sign-off
 
 - **direct register:** copy `templates/CINEMA-QA.md` into the project, fill every row with PASS/FAIL + evidence (metric value or screenshot filename). All-PASS ships; any FAIL loops back to its phase.
 - **build register:** the rubric table above, inline in your final report.
+- **system register:** the rubric table, plus systemscan's verdict quoted verbatim (variant counts per control, focus failures, one-off variants) and confirmation that you looked at `components.png`.
 - Report honestly and concretely: "slopscan 0 fails / 2 accepted warns (reasons logged); 21+6 screenshots reviewed — fixed S4 headline overflow at 390; LCP 1.8s; CLS 0.02; reduced-motion cut verified." If something is unverified (e.g. no local server to measure LCP), say so explicitly rather than implying a pass.
 - Optional second opinion: `/impeccable critique <url>` — impeccable measures UX heuristics auteur doesn't; disagreement between the two is signal, not noise.
 

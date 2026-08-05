@@ -177,9 +177,13 @@ for (const c of ordered) {
 // Rendering an HTML grid and screenshotting it needs no extra dependency and copes
 // with mixed aspect ratios — one image the model reads instead of 24 separate ones.
 const PER_SHEET = 20;
+// A remainder of one or two tiles becoming its own 95%-empty page costs a second look for nothing,
+// and the doctrine promises reading a moodboard costs one look. Balance the sheets instead.
+const sheetCount = Math.max(1, Math.round(kept.length / PER_SHEET));
+const perSheet = Math.ceil(kept.length / sheetCount);
 const sheets = [];
-for (let s = 0; s * PER_SHEET < kept.length; s++) {
-  const slice = kept.slice(s * PER_SHEET, (s + 1) * PER_SHEET);
+for (let s = 0; s * perSheet < kept.length; s++) {
+  const slice = kept.slice(s * perSheet, (s + 1) * perSheet);
   const html = `<!doctype html><meta charset="utf-8"><style>
     body{margin:0;background:#111;font:13px/1.2 ui-monospace,monospace;color:#eee}
     .g{display:grid;grid-template-columns:repeat(${cols},1fr);gap:10px;padding:10px}
@@ -195,7 +199,7 @@ for (let s = 0; s * PER_SHEET < kept.length; s++) {
   await page.setViewportSize({ width: cols * 320, height: 1000 });
   await page.goto('file:///' + f.replace(/\\/g, '/'), { waitUntil: 'load', timeout: 20_000 }).catch(() => {});
   await page.waitForTimeout(1200);
-  const name = sheets.length === 0 && kept.length <= PER_SHEET ? 'contact-sheet.png' : `contact-sheet-${s + 1}.png`;
+  const name = sheetCount === 1 ? 'contact-sheet.png' : `contact-sheet-${s + 1}.png`;
   await page.screenshot({ path: join(outDir, name), fullPage: true });
   await page.close();
   sheets.push(name);

@@ -4,12 +4,20 @@ The storyboard's `asset:` lines are a shot list. This file turns them into files
 
 ## 0. The crew — probe once, route by strength
 
+**Probe with a real round trip, never with `--version`.** These are subscription CLIs and the failure
+that actually happens is expired auth, not a missing binary — measured: all three passed `--version`
+and all three were dead. Worse, they fail dishonestly: **`grok` exits 0 while printing "Not signed
+in"** and **`agy` exits 2 while printing nothing at all**. Read the OUTPUT, not the exit code.
+
 ```bash
-agy --version    # Gemini: fast image gen + edit, writes straight to a path
-codex --version  # gpt-image: highest fidelity (read-only sandbox → pick up the PNG)
-grok --version   # grok-4.5: strong gen + edit AND real video (image_to_video); one engine = scene stays consistent gen→edit→video
-ffmpeg -version  # optimize, extract frames, concat video segments
+agy -p "reply with the single word: ok"                  # Gemini: fast image gen + edit, writes straight to a path
+codex exec --skip-git-repo-check "reply with: ok"        # gpt-image: highest fidelity
+grok -p "reply with the single word: ok"                 # grok-4.5: gen + edit + real video, one consistent engine
+ffmpeg -version                                          # not a subscription; --version is fine here
 ```
+
+A tool that does not answer `ok` is unavailable, whatever its version says. Note it as unavailable in
+the asset plan and route around it — §0.5 and §4 — rather than discovering it mid-shoot.
 
 Grok reaches **grok-4.5** only through the non-EU proxy (`ALL_PROXY="$GROK_PROXY" HTTPS_PROXY="$GROK_PROXY"`); without it grok still gens/edits/videos on grok-build. MiniMax music (ambient score) needs `MINIMAX_API_KEY` — skip the audio leg if unset.
 
@@ -17,7 +25,7 @@ Grok reaches **grok-4.5** only through the non-EU proxy (`ALL_PROXY="$GROK_PROXY
 
 | Asset | Tool | Why |
 |---|---|---|
-| Hero / brand-critical stills — peak scene, abstract hero background (needs clean negative space for text), product mockup / UI screen, premium transparent element or icon | **codex** | quality king across every type tested: cleanest UI render, most negative space, best material realism. Weaknesses: palette drifts warm (weak on teal-shadow / cool briefs), and it cannot edit-into-B or make video |
+| Hero / brand-critical stills — peak scene, abstract hero background (needs clean negative space for text), product mockup / UI screen, premium transparent element or icon | **codex** | quality king across every type tested: cleanest UI render, most negative space, best material realism. Weaknesses: palette drifts warm (weak on teal-shadow / cool briefs), and it cannot make video. It *can* edit an existing frame — via stdin only, see §2 |
 | Any scene that becomes VIDEO or needs a consistent A→B edit pair; exact brand-COLOR adherence | **grok-4.5** | one engine does gen + edit + video → zero scene drift across the A→B→clip pipeline; best palette adherence when codex drifts warm |
 | Volume & CONTEXT — lifestyle/environmental shots (room, hands, props, in-situ), bulk backgrounds, fast iteration | **agy** | fast, natural environmental context, writes direct to file |
 | Real video | **grok** `image_to_video` (6 or 10s) | animate an approved keyframe |
@@ -195,7 +203,15 @@ If video still isn't right — the ladder (§4) covers you; scroll-scrubbed *seq
 | 2 | Canvas image sequence | a clip to explode into frames, or 6–12 generated in-between edits | Apple-grade product cinema |
 | 3 | WebGL displacement morph A→B | just TWO keyframes (§2) | a living transition; the skill's signature move |
 | 4 | Layered depth parallax | one keyframe cut into 2–4 layers (subject/bg), or CSS layers | dimensional, quietly premium |
-| 5 | Kinetic typography / pure CSS scene | nothing | still cinema, if the type system is strong |
+| 5 | Kinetic typography / computed / pure CSS scene | nothing | still cinema, if the type system is strong |
+
+**When NO generator answers the probe**, rungs 1–4 are all unreachable at once — every one of them
+needs at least one generated keyframe. Do not treat that as "descend one rung": go back to §0.5 and
+re-read the source-vs-generate table as a *fallback* table rather than a spending decision, then land
+on rung 5. And drop the idea that rung 5 is a consolation prize: for a brand whose claim is precision,
+a scene *computed from the same data the product is about* is more honest than any photograph, because
+nothing in it could have been someone else's object. Measured on a real run — three planned
+generations became three computed scenes and the page got better.
 
 Rung 3 is the default answer to "we generated two images and want the video feel" — recipe (full GLSL) in scroll-cinema.md.
 

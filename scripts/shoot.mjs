@@ -11,12 +11,14 @@ import { resolve, join } from 'path';
 // --- CLI parsing ---
 const args = process.argv.slice(2);
 if (!args.length || args[0] === '--help') {
-  console.log('Usage: node shoot.mjs <url> [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--reduced-motion] [--full]');
+  console.log('Usage: node shoot.mjs <url> [<url>...] [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--reduced-motion] [--full]');
   console.log('Writes: <out>/bp<width>-stop<NN>.png  (also bp<width>-rm-stop<NN>.png with --reduced-motion, bp<width>-full.png with --full)');
   process.exit(0);
 }
 
-let rawUrl = args[0];
+// Multi-screen products need every route shot, not a sample — take all leading non-flag args.
+const rawTargets = [];
+for (const a of args) { if (a.startsWith('--')) break; rawTargets.push(a); }
 const get = (flag, def) => {
   const i = args.indexOf(flag);
   return i !== -1 ? args[i + 1] : def;
@@ -33,12 +35,17 @@ const breakpoints = bpArg.split(',').map(Number);
 const heights     = { 390: 844, 768: 1024, 1440: 900 };
 const getHeight   = w => heights[w] ?? 900;
 
-// Convert local path → file:// URL
-if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://') && !rawUrl.startsWith('file://')) {
-  const abs = resolve(rawUrl);
-  rawUrl = 'file:///' + abs.replace(/\\/g, '/');
-}
-const pageUrl = rawUrl;
+// Convert local paths → file:// URLs
+const toUrl = u => (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('file://'))
+  ? u
+  : 'file:///' + resolve(u).replace(/\\/g, '/');
+const targets = rawTargets.map(toUrl);
+// One route keeps the historical bp<width>-stop<NN>.png names; several get a per-route prefix.
+// Truncating the tail collides for routes that share a long suffix and silently overwrites frames,
+// so keep the distinguishing end AND an index that cannot repeat.
+const labelFor = (u, i) => targets.length === 1 ? '' :
+  `${String(i).padStart(2, '0')}_${(u.replace(/^https?:\/\//, '').replace(/^file:\/\/\//, '')
+    .replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '').slice(-24)) || 'r'}-`;
 
 // --- Dynamic import playwright with friendly error ---
 let chromium;
@@ -75,6 +82,8 @@ let totalWritten = 0;
 let anySucceeded = false;
 const summary = [];
 
+for (const [ti, pageUrl] of targets.entries()) {
+const prefix = labelFor(pageUrl, ti);
 for (const width of breakpoints) {
   const vpHeight = getHeight(width);
   const bpErrors = [];
@@ -122,7 +131,7 @@ for (const width of breakpoints) {
       await page.evaluate(y => window.scrollTo({ top: y, behavior: 'smooth' }), target);
       await page.waitForTimeout(700); // let scroll-triggered animations settle
 
-      const fname = `bp${width}-stop${pad(si)}.png`;
+      const fname = `${prefix}bp${width}-stop${pad(si)}.png`;
       const fpath = join(outDir, fname);
       const buf   = await page.screenshot({ path: fpath, fullPage: false });
       bpFiles.push(fname);
@@ -142,10 +151,12 @@ for (const width of breakpoints) {
       } catch {
         await rmPage.goto(pageUrl, { waitUntil: 'load', timeout: 15_000 });
       }
-      for (const [idx, stop] of [[0, stops[0]], [stops.length - 1, stops[stops.length - 1]]]) {
+      // Every stop, not just first and last: the peak lives at 40-70% depth, so shooting only the
+      // ends captures exactly the frames the reduced-motion cut was never going to break.
+      for (const [idx, stop] of stops.map((s, i) => [i, s])) {
         await rmPage.evaluate(y => window.scrollTo({ top: y, behavior: 'smooth' }), stop);
         await rmPage.waitForTimeout(700);
-        const fname = `bp${width}-rm-stop${pad(idx)}.png`;
+        const fname = `${prefix}bp${width}-rm-stop${pad(idx)}.png`;
         const fpath = join(outDir, fname);
         const buf   = await rmPage.screenshot({ path: fpath, fullPage: false });
         bpFiles.push(fname);
@@ -155,9 +166,9 @@ for (const width of breakpoints) {
       await rmContext.close();
     }
 
-    // --full: one full-page screenshot
+    // --full: one full-page screenshot (and its reduced-motion twin when both flags are on)
     if (fullPage) {
-      const fname = `bp${width}-full.png`;
+      const fname = `${prefix}bp${width}-full.png`;
       const fpath = join(outDir, fname);
       const buf   = await page.screenshot({ path: fpath, fullPage: true });
       bpFiles.push(fname);
@@ -166,13 +177,14 @@ for (const width of breakpoints) {
     }
 
     anySucceeded = true;
-    summary.push({ width, scrollHeight, files: bpFiles, errors: bpErrors });
+    summary.push({ url: pageUrl, width, scrollHeight, files: bpFiles, errors: bpErrors });
   } catch (err) {
-    console.error(`[bp ${width}] failed: ${err.message}`);
-    summary.push({ width, failed: true, error: err.message });
+    console.error(`[${pageUrl} bp ${width}] failed: ${err.message}`);
+    summary.push({ url: pageUrl, width, failed: true, error: err.message });
   } finally {
     await browser?.close();
   }
+}
 }
 
 // --- Print summary ---
@@ -180,10 +192,11 @@ console.log('\n=== shoot.mjs summary ===');
 console.log(`Output dir : ${outDir}`);
 console.log(`Files written: ${totalWritten}`);
 for (const s of summary) {
+  const where = targets.length > 1 ? `${s.url} ` : '';
   if (s.failed) {
-    console.log(`  bp${s.width}: FAILED — ${s.error}`);
+    console.log(`  ${where}bp${s.width}: FAILED — ${s.error}`);
   } else {
-    console.log(`  bp${s.width}: scrollHeight=${s.scrollHeight}px  files=${s.files.length}`);
+    console.log(`  ${where}bp${s.width}: scrollHeight=${s.scrollHeight}px  files=${s.files.length}`);
     if (s.errors.length) console.log(`    page errors: ${s.errors.join(' | ')}`);
   }
 }

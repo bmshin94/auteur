@@ -1,5 +1,7 @@
 <div align="center">
 
+English · [简体中文](README.zh-CN.md)
+
 <img src="assets/readme/hero.webp" width="880" alt="auteur — the landing page: the wordmark AUTEUR rendered as a field of particles behind the line 'Websites, directed like films.'">
 
 # auteur

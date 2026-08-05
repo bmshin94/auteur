@@ -240,6 +240,19 @@ covers every shipped page.
   (Codex, Gemini/`agy`, Blender). The skill routes to what's present and
   degrades gracefully to hand-authored assets when they aren't.
 
+## Network and permissions
+
+The skill declares a narrow tool surface: `node scripts/*` for its own gates,
+`npx playwright *` for the browser passes, and the media CLIs (`agy`, `codex`,
+`grok`, `ffmpeg`) only if you have them.
+
+Two phases reach the network, and only those two: **recon** reads live pages
+(awwwards, Bing / Pinterest / are.na image search) and **sourcing** fetches
+licence-clean assets (Poly Haven, Iconify, Google Fonts, Openverse, Coverr).
+No API keys, no logins, no credentials of any kind. Fetched content is treated
+as reference material and licence metadata — never executed. Skip phases 0–1
+and everything else runs offline.
+
 ## Accessibility floor
 
 Every site auteur ships: `prefers-reduced-motion` → a rich still, never blank;

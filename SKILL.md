@@ -5,15 +5,35 @@ version: 1.2.0
 user-invocable: true
 argument-hint: "[build|direct|system|edit|audit|recon] <brief or target>"
 allowed-tools:
-  - Bash(node *)
+  - Bash(node scripts/*)
+  - Bash(npx playwright *)
   - Bash(agy *)
   - Bash(codex *)
   - Bash(grok *)
   - Bash(ffmpeg *)
-  - Bash(npx *)
 ---
 
-Auteur designs and builds web experiences the way a film director makes a film: script first, then assets, then the shoot, then the cut. It has two registers — **build** (an excellent conventional site) and **direct** (a cinematic scroll-directed site) — on one shared core of taste. Nothing ships until the page passes an executable anti-slop gate and the skill has looked at its own output.
+Auteur designs and builds web experiences the way a film director makes a film: script first, then assets, then the shoot, then the cut. It has three registers — **build** (an excellent conventional site), **direct** (a cinematic scroll-directed site) and **system** (a multi-screen product as one design system) — on one shared core of taste. Nothing ships until the page passes an executable anti-slop gate and the skill has looked at its own output.
+
+### Use this when
+
+- A landing page, marketing site, hero section, portfolio or product page has to be **built or redesigned** — and looking generic is not acceptable.
+- The brief asks for **scroll animation, storytelling, or a site that feels like a film**.
+- A product spans **several screens that must feel like one thing** — app, dashboard, admin, onboarding, docs.
+- Someone says *make it beautiful*, *make it wow*, *cinematic*, or *design system*, naming no technique.
+
+Not for polishing a UI someone else built, and not for backend-only work.
+
+### What it actually does
+
+1. Commits the art direction **in writing before any markup** — one hue, one type system, a motion budget, named anti-references.
+2. Generates or sources the assets: local image/video CLIs, Blender, depth maps, CC0 meshes and HDRIs with their licences recorded.
+3. Builds from proven recipes — one WebGL context, transform/opacity motion, scroll state machines.
+4. **Gates the result**: `slopscan` fails the build on concrete slop, `motionqa` fails it on dropped frames, `systemscan` fails it on cross-route drift.
+
+### Network access
+
+The recon and sourcing scripts read live pages (awwwards, Bing/Pinterest/are.na image search, Poly Haven, Iconify, Google Fonts, Openverse, Coverr). Fetched content is **treated as reference data and licence metadata — never executed**, and no credentials, API keys or logins are involved. Skip phases 0–1 entirely if you don't want outbound requests; every other phase works offline.
 
 ## Non-negotiables
 

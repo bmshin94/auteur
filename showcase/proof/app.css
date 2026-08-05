@@ -147,13 +147,28 @@ footer{border-top:1px solid var(--steel);margin-top:48px;padding:20px 24px 40px;
 .runs:has(#f-done:checked) tbody tr:not([data-state="done"]){display:none}
 
 .tw{border-top:1px solid var(--steel)}
-@media (max-width:1099px){.tw{overflow-x:auto}}
+@media (max-width:1099px){
+  /* The runs table is 980px of columns; below 1100 it scrolls sideways, and the cut column
+     at the edge reads as a layout bug rather than as something you can swipe. The classic
+     shadow trick is useless here — a black shadow on a near-black slab is invisible — so
+     the edge fades instead. 24px: enough to read as deliberate, narrow enough that no
+     digit is lost, and the fade is on the scroll container, not the data. */
+  .tw{overflow-x:auto;
+      -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
+              mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent)}
+}
 table{border-collapse:collapse;width:100%}
 .tw-wide table{min-width:980px}   /* runs: 10 columns */
 .tw-mid table{min-width:560px}    /* accounts, ovens: fits 768 so the toggle column stays on screen */
 thead th{position:sticky;top:var(--hdr);z-index:5;background:var(--slab);text-align:left;
   font-family:'PlexM',ui-monospace,monospace;font-size:12px;font-weight:400;letter-spacing:.09em;
   color:var(--ink-3);padding:12px;border-bottom:1px solid var(--steel);white-space:nowrap}
+/* A sticky element inside a horizontally scrolling box is anchored to THAT box, not the
+   viewport — and .tw never scrolls vertically, so below 1100 the head rode away with the
+   rows while `top:var(--hdr)` still reserved a 23px strip under the header (.bar wraps to
+   47px on phones, not the 70px --hdr assumes) where passing rows showed through. Both
+   symptoms, one cause: the head cannot stick here, so it stops pretending to. */
+@media (max-width:1099px){thead th{position:static}}
 th.n,td.n{text-align:right}
 tbody td{font-family:'PlexM',ui-monospace,monospace;font-size:14px;font-weight:400;
   padding:12px;border-bottom:1px solid var(--slab-2);height:44px;vertical-align:middle;

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Runs — PROOF · Union Street Bakery</title>
+<meta name="description" content="Every production run of the bake day, filterable to the ones that hurt.">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<b id="state-loading" class="sa"></b><b id="state-empty" class="sa"></b><b id="state-error" class="sa"></b>
+<a class="skip" href="#main">Skip to the run list</a>
+
+<header>
+  <div class="bar">
+    <span class="mark">PROOF</span>
+    <span class="now">04:12</span>
+    <span class="chip">NIGHT</span>
+    <span class="date">Tue 4 Aug 2026 · lead D. Achebe</span>
+    <nav aria-label="Screens"><ul>
+      <li><a class="nav-a" href="index.html">Floor</a></li>
+      <li><a class="nav-a" href="runs.html" aria-current="page">Runs</a></li>
+      <li><a class="nav-a" href="accounts.html">Accounts</a></li>
+      <li><a class="nav-a" href="settings.html">Settings</a></li>
+    </ul></nav>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<main id="main" class="wrap">
+  <div class="lead">
+    <h1 class="h-page">Bake day — Tue 4 Aug</h1>
+    <p class="foot">30 runs, 01:05 to 05:46. Ordered the way the floor reads it — what is still
+      to come, soonest first, then what is already out, newest first. Sorting a column overrides that.</p>
+  </div>
+
+  <div class="st-err">
+    <div class="banner">
+      <p>Couldn’t load the bake day. Last good read <span class="dat">04:07</span>.
+        <b>The list below is 5 minutes old</b> — three runs may have moved since.</p>
+      <button type="button" class="btn btn-1">Retry</button>
+    </div>
+  </div>
+
+  <div class="runs st-live">
+    <div class="toolbar">
+      <div class="chips">
+        <label class="tgl-l"><input class="tgl" type="radio" name="f" id="f-all" checked>All <span class="tgl-n">30</span></label>
+        <label class="tgl-l"><input class="tgl" type="radio" name="f" id="f-late">Late <span class="tgl-n">3</span></label>
+        <label class="tgl-l"><input class="tgl" type="radio" name="f" id="f-run">In the oven <span class="tgl-n">8</span></label>
+        <label class="tgl-l"><input class="tgl" type="radio" name="f" id="f-next">To start <span class="tgl-n">6</span></label>
+        <label class="tgl-l"><input class="tgl" type="radio" name="f" id="f-done">Packed <span class="tgl-n">13</span></label>
+      </div>
+      <p class="cnt c-all">All 30 runs · 7,084 items</p>
+      <p class="cnt c-late">3 runs late · 300 items · all recoverable before their vans</p>
+      <p class="cnt c-run">8 ovens loaded · 2,194 items · first out 04:14</p>
+      <p class="cnt c-next">6 runs to start before 05:05 · 1,014 items</p>
+      <p class="cnt c-done">13 runs packed · 3,576 items</p>
+    </div>
+
+    <div class="tw tw-wide">
+      <table id="runs-table">
+        <caption class="sr">Production runs for Tue 4 Aug 2026, sorted by time out of the oven</caption>
+        <thead>
+          <tr>
+            <th scope="col"><button type="button" class="sortb" data-col="0">RUN</button></th>
+            <th scope="col"><button type="button" class="sortb" data-col="1">PRODUCT</button></th>
+            <th scope="col" class="n"><button type="button" class="sortb" data-col="2" data-num="1">QTY</button></th>
+            <th scope="col">STAGE</th>
+            <th scope="col"><button type="button" class="sortb" data-col="4">OVEN</button></th>
+            <th scope="col" class="c-hide">BAKE IN</th>
+            <th scope="col"><button type="button" class="sortb" data-col="6">OUT</button></th>
+            <th scope="col" class="c-hide"><button type="button" class="sortb" data-col="7">VAN</button></th>
+            <th scope="col" class="c-hide">ACCOUNTS</th>
+            <th scope="col">STATE</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr data-state="running"><td><a href="run.html">RUN-4465</a></td><td class="w">Croissant</td><td class="n">360</td><td class="w">In oven</td><td>CONV 1</td><td class="c-hide">03:56</td><td>04:14</td><td class="c-hide">06:30</td><td class="w c-hide">Bramble Café +5</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4467</a></td><td class="w">Country batard</td><td class="n">90</td><td class="w">In oven</td><td>DECK 2</td><td class="c-hide">03:44</td><td>04:16</td><td class="c-hide">06:30</td><td class="w c-hide">Lantern Bistro +3</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4464</a></td><td class="w">Kaiser roll</td><td class="n">600</td><td class="w">In oven</td><td>RACK 1</td><td class="c-hide">03:55</td><td>04:19</td><td class="c-hide">06:30</td><td class="w c-hide">Kestrel School District +4</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4466</a></td><td class="w">Sourdough boule</td><td class="n">120</td><td class="w">In oven</td><td>DECK 1</td><td class="c-hide">03:51</td><td>04:23</td><td class="c-hide">06:30</td><td class="w c-hide">Pellet &amp; Vine +3</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4473</a></td><td class="w">Pain au chocolat</td><td class="n">240</td><td class="w">In oven</td><td>CONV 2</td><td class="c-hide">04:12</td><td>04:26</td><td class="c-hide">06:30</td><td class="w c-hide">Bramble Café +6</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="late"><td><a href="run.html">RUN-4468</a></td><td class="w">Focaccia sheet</td><td class="n">48</td><td class="w">Shaping</td><td>—</td><td class="c-hide">04:05</td><td>04:27</td><td class="c-hide">06:30</td><td class="w c-hide">Greenway Provisions +2</td><td><span class="pill p-late">LATE 7m</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4469</a></td><td class="w">Baguette</td><td class="n">240</td><td class="w">In oven</td><td>DECK 3</td><td class="c-hide">04:09</td><td>04:31</td><td class="c-hide">06:30</td><td class="w c-hide">Rook &amp; Rye +7</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4472</a></td><td class="w">Burger bun</td><td class="n">480</td><td class="w">In oven</td><td>RACK 2</td><td class="c-hide">04:12</td><td>04:34</td><td class="c-hide">08:00</td><td class="w c-hide">Nine Elms Canteen +4</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="late"><td><a href="run.html">RUN-4471</a></td><td class="w">Ciabatta</td><td class="n">180</td><td class="w">Final proof</td><td>DECK 4</td><td class="c-hide">04:18</td><td>04:40</td><td class="c-hide">06:30</td><td class="w c-hide">Pellet &amp; Vine +6</td><td><span class="pill p-late">LATE 22m</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4475</a></td><td class="w">English muffin</td><td class="n">420</td><td class="w">On the bench</td><td>CONV 1</td><td class="c-hide">04:25</td><td>04:43</td><td class="c-hide">08:00</td><td class="w c-hide">Tally’s Sandwich Bar +6</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="running"><td><a href="run.html">RUN-4470</a></td><td class="w">Rye pan loaf</td><td class="n">64</td><td class="w">In oven</td><td>DECK 5</td><td class="c-hide">04:12</td><td>04:53</td><td class="c-hide">08:00</td><td class="w c-hide">Wickham Farm Shop +3</td><td><span class="pill p-run">IN OVEN</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4476</a></td><td class="w">Danish, apricot</td><td class="n">180</td><td class="w">In the retarder</td><td>CONV 2</td><td class="c-hide">04:40</td><td>04:58</td><td class="c-hide">08:00</td><td class="w c-hide">The Reading Room Café +5</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4478</a></td><td class="w">Baguette</td><td class="n">180</td><td class="w">Bulk ferment</td><td>DECK 3</td><td class="c-hide">04:40</td><td>05:02</td><td class="c-hide">08:00</td><td class="w c-hide">Slate &amp; Grain +4</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4479</a></td><td class="w">Whole wheat sandwich</td><td class="n">96</td><td class="w">Final proof</td><td>DECK 1</td><td class="c-hide">04:50</td><td>05:22</td><td class="c-hide">08:00</td><td class="w c-hide">Ferngate Nursing Home +3</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4474</a></td><td class="w">Sourdough boule</td><td class="n">90</td><td class="w">Dividing</td><td>DECK 2</td><td class="c-hide">05:20</td><td>05:42</td><td class="c-hide">08:00</td><td class="w c-hide">The Blue Anchor +2</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="queued"><td><a href="run.html">RUN-4477</a></td><td class="w">Seeded rye</td><td class="n">48</td><td class="w">Bulk ferment</td><td>DECK 5</td><td class="c-hide">05:05</td><td>05:46</td><td class="c-hide">10:30</td><td class="w c-hide">Ashcroft Golf Club +4</td><td><span class="pill p-queue">TO START</span></td></tr>
+<tr data-state="late"><td><a href="run.html">RUN-4455</a></td><td class="w">Brioche loaf</td><td class="n">72</td><td class="w">Cooling, unpacked</td><td>DECK 1</td><td class="c-hide">03:03</td><td>03:35</td><td class="c-hide">06:30</td><td class="w c-hide">Meridian Hotel +2</td><td><span class="pill p-late">LATE 37m</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4463</a></td><td class="w">Whole wheat sandwich</td><td class="n">144</td><td class="w">Packed</td><td>DECK 4</td><td class="c-hide">02:50</td><td>03:22</td><td class="c-hide">06:30</td><td class="w c-hide">Kestrel School District +1</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4462</a></td><td class="w">Danish, apricot</td><td class="n">240</td><td class="w">Packed</td><td>CONV 1</td><td class="c-hide">02:45</td><td>03:03</td><td class="c-hide">06:30</td><td class="w c-hide">Larkspur Café +5</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4460</a></td><td class="w">Country batard</td><td class="n">120</td><td class="w">Packed</td><td>DECK 2</td><td class="c-hide">02:30</td><td>03:02</td><td class="c-hide">06:30</td><td class="w c-hide">Salt House Restaurant +3</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4461</a></td><td class="w">Baguette</td><td class="n">300</td><td class="w">Packed</td><td>DECK 3</td><td class="c-hide">02:35</td><td>02:57</td><td class="c-hide">06:30</td><td class="w c-hide">Lantern Bistro +8</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4458</a></td><td class="w">Rye pan loaf</td><td class="n">96</td><td class="w">Packed</td><td>DECK 5</td><td class="c-hide">02:15</td><td>02:47</td><td class="c-hide">06:30</td><td class="w c-hide">Greenway Provisions +3</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4459</a></td><td class="w">English muffin</td><td class="n">360</td><td class="w">Packed</td><td>CONV 2</td><td class="c-hide">02:20</td><td>02:38</td><td class="c-hide">05:00</td><td class="w c-hide">Marnie’s Deli +5</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4457</a></td><td class="w">Focaccia sheet</td><td class="n">36</td><td class="w">Packed</td><td>CONV 1</td><td class="c-hide">02:10</td><td>02:32</td><td class="c-hide">05:00</td><td class="w c-hide">The Wharf Kitchen +2</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4456</a></td><td class="w">Burger bun</td><td class="n">360</td><td class="w">Packed</td><td>RACK 2</td><td class="c-hide">02:00</td><td>02:22</td><td class="c-hide">06:30</td><td class="w c-hide">Foundry Canteen +3</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4454</a></td><td class="w">Pain au chocolat</td><td class="n">300</td><td class="w">Packed</td><td>CONV 2</td><td class="c-hide">01:35</td><td>01:53</td><td class="c-hide">05:00</td><td class="w c-hide">Pico Espresso +7</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4453</a></td><td class="w">Sourdough boule</td><td class="n">180</td><td class="w">Packed</td><td>DECK 1</td><td class="c-hide">01:20</td><td>01:52</td><td class="c-hide">05:00</td><td class="w c-hide">Halcyon Grocery +4</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4452</a></td><td class="w">Kaiser roll</td><td class="n">720</td><td class="w">Packed</td><td>RACK 1</td><td class="c-hide">01:15</td><td>01:33</td><td class="c-hide">05:00</td><td class="w c-hide">Northgate Grocers +5</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4451</a></td><td class="w">Croissant</td><td class="n">480</td><td class="w">Packed</td><td>CONV 1</td><td class="c-hide">01:10</td><td>01:28</td><td class="c-hide">05:00</td><td class="w c-hide">Beacon Hotel +6</td><td><span class="pill p-done">PACKED</span></td></tr>
+<tr data-state="done"><td><a href="run.html">RUN-4450</a></td><td class="w">Baguette</td><td class="n">240</td><td class="w">Packed</td><td>DECK 3</td><td class="c-hide">01:05</td><td>01:27</td><td class="c-hide">05:00</td><td class="w c-hide">Ardent Coffee +8</td><td><span class="pill p-done">PACKED</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LOADING: eight skeleton rows at exactly 44px, head already drawn -->
+  <div class="st-load">
+    <div class="tw tw-wide">
+      <div class="skel-row skel-head"><span class="lbl">RUN</span><span class="lbl">PRODUCT</span><span class="lbl">OUT</span><span class="lbl">VAN</span><span class="lbl">STATE</span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+      <div class="skel-row"><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span><span class="skel"></span></div>
+    </div>
+    <p class="loadnote" aria-live="polite">Reading the bake day…</p>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="st-empty">
+    <div class="empty">
+      <h2 class="h-page">No runs for Tue 4 Aug</h2>
+      <p>The bake day hasn’t been released yet. Night shift normally releases it by 20:00 the
+         evening before, off the standing orders plus whatever the 17:00 call-ins added.</p>
+      <button type="button" class="btn btn-1">Release today’s plan</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p class="foot">PROOF · design prototype · data frozen at 04:12, Tue 4 Aug 2026.
+    Filtering is CSS only, so it works with scripting off; sorting is the one thing that needs JS.</p>
+  <p class="foot">See this screen’s states:
+    <a href="runs.html">live</a> ·
+    <a href="runs.html#state-loading">loading</a> ·
+    <a href="runs.html#state-empty">empty</a> ·
+    <a href="runs.html#state-error">load failed</a></p>
+</footer>
+<script src="sort.js"></script>
+</body>
+</html>

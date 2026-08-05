@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Floor — PROOF · Union Street Bakery</title>
+<meta name="description" content="What is baking now, what is late, and what has to start in the next hour.">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<b id="state-loading" class="sa"></b><b id="state-empty" class="sa"></b><b id="state-error" class="sa"></b>
+<a class="skip" href="#main">Skip to the floor</a>
+
+<header>
+  <div class="bar">
+    <span class="mark">PROOF</span>
+    <span class="now">04:12</span>
+    <span class="chip">NIGHT</span>
+    <span class="date">Tue 4 Aug 2026 · lead D. Achebe</span>
+    <nav aria-label="Screens"><ul>
+      <li><a class="nav-a" href="index.html" aria-current="page">Floor</a></li>
+      <li><a class="nav-a" href="runs.html">Runs</a></li>
+      <li><a class="nav-a" href="accounts.html">Accounts</a></li>
+      <li><a class="nav-a" href="settings.html">Settings</a></li>
+    </ul></nav>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<main id="main" class="floor-stack">
+
+  <!-- ERROR: the moment of care. The data below stays on screen, dimmed, with its age stamped. -->
+  <div class="st-err">
+    <div class="wrap">
+      <div class="banner">
+        <p>The oven controller stopped answering at <span class="dat">04:07</span>.
+           <b>Everything below is what it last told us, 5 minutes ago.</b>
+           Timers are frozen. Check the deck thermometers before you pull anything.</p>
+        <button type="button" class="btn btn-1">Try the controller again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- the oven band: full bleed, eleven unequal cells, in the order the ovens stand on the floor -->
+  <div class="band-wrap st-live">
+    <h1 class="sr">Floor — night shift, Tue 4 Aug, as of 04:12</h1>
+    <div class="band">
+      <div class="oven">
+        <p class="oven-n">DECK 1</p><p class="oven-p">Sourdough boule</p><p class="oven-q">×120</p>
+        <div class="oven-f"></div><p class="oven-m">11</p><p class="oven-u">MIN · OUT 04:23</p>
+      </div>
+      <div class="oven soon">
+        <p class="oven-n">DECK 2</p><p class="oven-p">Country batard</p><p class="oven-q">×90</p>
+        <div class="oven-f"></div><p class="oven-m">4</p><p class="oven-u">MIN · OUT 04:16</p>
+      </div>
+      <div class="oven">
+        <p class="oven-n">DECK 3</p><p class="oven-p">Baguette</p><p class="oven-q">×240</p>
+        <div class="oven-f"></div><p class="oven-m">19</p><p class="oven-u">MIN · OUT 04:31</p>
+      </div>
+      <div class="oven soon">
+        <p class="oven-n">DECK 4</p><p class="oven-p">Preheating 246°C</p>
+        <p class="oven-q">for <a href="run.html">RUN-4471</a></p>
+        <div class="oven-f"></div><p class="oven-m">6</p><p class="oven-u">MIN TO READY</p>
+      </div>
+      <div class="oven">
+        <p class="oven-n">DECK 5</p><p class="oven-p">Rye pan loaf</p><p class="oven-q">×64</p>
+        <div class="oven-f"></div><p class="oven-m">41</p><p class="oven-u">MIN · OUT 04:53</p>
+      </div>
+      <div class="oven">
+        <p class="oven-n">RACK 1</p><p class="oven-p">Kaiser roll</p><p class="oven-q">×600</p>
+        <div class="oven-f"></div><p class="oven-m">7</p><p class="oven-u">MIN · OUT 04:19</p>
+      </div>
+      <div class="oven">
+        <p class="oven-n">RACK 2</p><p class="oven-p">Burger bun</p><p class="oven-q">×480</p>
+        <div class="oven-f"></div><p class="oven-m">22</p><p class="oven-u">MIN · OUT 04:34</p>
+      </div>
+      <div class="oven cold">
+        <p class="oven-n">RACK 3</p><p class="oven-p">Clear</p><p class="oven-q">next 06:10</p>
+        <div class="oven-f"></div><p class="oven-s">Idle</p><p class="oven-u">DOOR OPEN</p>
+      </div>
+      <div class="oven dead">
+        <p class="oven-n">RACK 4</p><p class="oven-p">Element fault</p><p class="oven-q">logged 02:40</p>
+        <div class="oven-f"></div><p class="oven-s">Out</p><p class="oven-u">ENGINEER 09:00</p>
+      </div>
+      <div class="oven soon">
+        <p class="oven-n">CONV 1</p><p class="oven-p">Croissant</p><p class="oven-q">×360</p>
+        <div class="oven-f"></div><p class="oven-m">2</p><p class="oven-u">MIN · OUT 04:14</p>
+      </div>
+      <div class="oven">
+        <p class="oven-n">CONV 2</p><p class="oven-p">Pain au chocolat</p><p class="oven-q">×240</p>
+        <div class="oven-f"></div><p class="oven-m">14</p><p class="oven-u">MIN · OUT 04:26</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="wrap split st-live" aria-label="What needs a person">
+    <div>
+      <h2 class="late-h">LATE</h2>
+      <a class="late" href="run.html">
+        <span class="late-id">RUN-4471 · DECK 4</span>
+        <span class="late-w">Ciabatta ×180</span>
+        <span class="late-b">22 MIN</span>
+        <span class="late-y">Due in the deck at 03:50; the deck was held by an over-running baguette bake.
+          Goes in 04:18, out 04:40. Still makes the 06:30 van with 65 minutes of slack.</span>
+      </a>
+      <a class="late" href="runs.html">
+        <span class="late-id">RUN-4468 · NO OVEN</span>
+        <span class="late-w">Focaccia sheet ×48</span>
+        <span class="late-b">7 MIN</span>
+        <span class="late-y">Shaping never started; bake was due 04:05. RACK 3 is clear until 06:10, the only
+          oven free before the danish.</span>
+      </a>
+      <a class="late" href="runs.html">
+        <span class="late-id">RUN-4455 · BENCH 2</span>
+        <span class="late-w">Brioche loaf ×72</span>
+        <span class="late-b">37 MIN</span>
+        <span class="late-y">Out of DECK 1 at 03:35, still unpacked on cooling bench 2.
+          It is holding the bench the 04:30 danish needs.</span>
+      </a>
+    </div>
+    <div>
+      <h2 class="next-h">04:12 → 05:12<span>WHAT HAS TO START</span></h2>
+      <ul class="starts">
+        <li><span class="t">04:16</span><span>Sourdough boule ×90 · divide &amp; shape</span><span class="o">DECK 2</span></li>
+        <li><span class="t">04:18</span><span>Ciabatta ×180 · bake<em>LATE</em></span><span class="o">DECK 4</span></li>
+        <li><span class="t">04:25</span><span>English muffin ×420 · griddle</span><span class="o">CONV 1</span></li>
+        <li><span class="t">04:30</span><span>Danish, apricot ×180 · out of the retarder</span><span class="o">CONV 2</span></li>
+        <li><span class="t">04:40</span><span>Baguette ×180 · second bake</span><span class="o">DECK 3</span></li>
+        <li><span class="t">04:50</span><span>Whole wheat sandwich ×96 · bake</span><span class="o">DECK 1</span></li>
+        <li><span class="t">05:05</span><span>Seeded rye ×48 · bake</span><span class="o">DECK 5</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="wrap vwrap st-live">
+    <div class="vans">
+      <div class="van">
+        <p class="van-t">05:00</p>
+        <p class="van-d">11 accounts · 7 runs · 2,316 items</p>
+        <p class="van-s">All packed</p>
+      </div>
+      <div class="van risk">
+        <p class="van-t">06:30</p>
+        <p class="van-d">14 accounts · 15 runs · 3,210 items</p>
+        <p class="van-s">RUN-4471 tight · 65 min slack</p>
+      </div>
+      <div class="van">
+        <p class="van-t">08:00</p>
+        <p class="van-d">10 accounts · 7 runs · 1,510 items</p>
+        <p class="van-s">On plan</p>
+      </div>
+      <div class="van">
+        <p class="van-t">10:30</p>
+        <p class="van-d">5 accounts · 1 run · 48 items</p>
+        <p class="van-s">On plan</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING: outlined cells at full height so nothing jumps when the numbers land -->
+  <div class="st-load">
+    <div class="band">
+      <div class="oven cold"><p class="oven-n">DECK 1</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">DECK 2</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">DECK 3</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">DECK 4</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">DECK 5</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">RACK 1</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">RACK 2</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">RACK 3</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">RACK 4</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">CONV 1</p><div class="oven-f"></div><p class="skel"></p></div>
+      <div class="oven cold"><p class="oven-n">CONV 2</p><div class="oven-f"></div><p class="skel"></p></div>
+    </div>
+    <p class="wrap loadnote" aria-live="polite">Reading the oven controller…</p>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="wrap st-empty">
+    <div class="empty">
+      <h2 class="h-page">Ovens cold</h2>
+      <p>Nothing is scheduled until <span class="dat">21:40</span>, when the Sunday night shift opens
+         with rye pan loaves for Halcyon Grocery. All eleven ovens are down to holding temperature
+         and RACK 4 is still out for its element.</p>
+      <button type="button" class="btn btn-1">Open the week’s plan</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p class="foot">PROOF · design prototype · data frozen at 04:12, Tue 4 Aug 2026. A static
+    file cannot honestly tick, so the clock does not pretend to.</p>
+  <p class="foot">See this screen’s states:
+    <a href="index.html">live</a> ·
+    <a href="index.html#state-loading">loading</a> ·
+    <a href="index.html#state-empty">empty</a> ·
+    <a href="index.html#state-error">controller down</a></p>
+</footer>
+</body>
+</html>

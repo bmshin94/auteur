@@ -175,6 +175,23 @@ const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
 Grain / noise filter overlays: only on `position: fixed; inset: 0; pointer-events: none; z-index: 60` pseudo-elements. Never on scrolling containers — continuous GPU repaints destroy mobile FPS.
 
+### Fullscreen passes are priced per pixel, not per object
+
+A scene rarely dies of geometry. Hundreds of thousands of triangles, thousands of particles, shadows and volumetric fog all fit inside a 16.7ms frame. What eats the budget is every pass that touches the whole screen, because those cost the same whether the frame contains one sphere or a city. Order of magnitude, measured on a retina laptop (1440×900 @2x = 5.2MP) for one WebGL scene:
+
+| Pass | ~cost / frame | |
+|---|---|---|
+| chromatic aberration + grain | 8ms | the "free" cinematic layer is the most expensive thing on the page |
+| bloom | 7ms | at half-res; dropping to quarter-res saved 0.7ms — the cost is compositing over the frame, not the blur |
+| custom transition shader | 5ms | |
+| depth of field | 17ms | over the entire budget alone; it was cut, not optimized |
+
+Read the **order**, not the absolutes — your GPU differs, and summing these is meaningless because passes overlap. Three rules follow:
+
+- **Pixel count is the main lever — for pages that have these passes.** A scene carrying DoF + bloom + grain runs 60fps at 2MP and 30fps at 4.5MP. A scene with no fullscreen pass barely notices: measured on three showcase sites at 4× CPU throttle, DPR 1 → 2 moved minFps by 0–1 (53→54, 53→53, 54→54), because there the ceiling is the main thread, not fillrate. Still measure at DPR 2 — the day a bloom lands, the honest number is already the one you have been quoting. Cap `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))`, and when a scene is over budget, cut resolution or a pass before you cut geometry.
+- **Measure by ablation** — switch passes off one at a time and re-measure. Intuition is wrong about which one hurts: shadows usually turn out nearly free, and the effect that "barely does anything" is often the 8ms one.
+- **Measure the production build.** A dev server costs roughly 2× per frame (HMR client, unminified bundles, no asset pipeline), so its numbers describe a page nobody will load. `motionqa.mjs` flags a detected dev server, but it cannot detect every one of them.
+
 ---
 
 ## Stagger and orchestration

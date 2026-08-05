@@ -105,6 +105,13 @@ Do not confuse sourced assets with the moodboard. `design/moodboard/` is other p
 only to decide direction and then thrown away (`recon.md`). `assets/sourced/` is licensed material
 that genuinely ships.
 
+**Sourced assets are gitignored by default, which is exactly how the scene 404s in production.** The
+fetch script writes into an ignored directory; the deploy builds from the repository; the page arrives
+on the host without its textures, HDRI or meshes — and a missing HDRI does not degrade gracefully, it
+throws. Decide it once, in writing, before the first deploy: either commit the optimized assets (after
+§5 they are small enough to) or run the fetch as a build step. "It works locally" is this bug's
+signature, and it always surfaces in front of the client.
+
 ## 1. Generating keyframes
 
 Build the prompt FROM the scene-sheet — `subject` + `camera` + `lighting` are literal prompt parameters, plus palette anchors from the commit-sheet:
@@ -233,6 +240,8 @@ ffmpeg -i in.png -quality 82 out.webp
 ```
 
 Budgets (verify.md re-checks): hero video ≤2MB · poster ≤300KB · sequence frame ≤150KB @1440w · any static hero image ≤400KB · mobile variants at 720w for every asset >500KB.
+
+**When a 4K texture still looks soft, resolution is not the problem.** Check two things, in this order. First, anisotropic filtering — off by default in three.js, and without it any surface viewed at a grazing angle (ground under a low camera, a floor receding to the horizon) smears no matter how many pixels the map holds: `tex.anisotropy = renderer.capabilities.getMaxAnisotropy()`. Second, the tiling scale, counted as **metres per repeat rather than repeats per plane** — a 260m ground plane with 28 repeats is a 9-metre tile, and at 9 metres the detail is gone at any texture size; ~3m per repeat is a working default for ground. Both mistakes look identical to "the texture is too low-res", which is why the reflex fix (download the 8K version) makes the page heavier and no sharper.
 
 ## 6. Cache & bookkeeping
 

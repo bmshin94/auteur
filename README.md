@@ -76,10 +76,14 @@ Then just ask:
 Claude runs the pipeline — commit-sheet → assets → build → gate — and hands you
 the site.
 
-## The proof: nine live sites
+## The proof: ten live sites
 
 Don't take the pitch — open them. Each was built by auteur, and each passes the
-skill's own linter at **0 fails / 0 warns**.
+skill's own linter at **0 fails / 0 warns**. The tenth was not built by Claude:
+Kimi K3 was handed `SKILL.md` and a brief, saw none of the other nine, and came
+out lit, serif and green in a category whose every reflex is black and gold —
+naming in writing, before it built, the four house tells it intended to break.
+The skill is the thing that travels, not the model.
 
 <table>
 <tr>
@@ -124,13 +128,22 @@ skill's own linter at **0 fails / 0 warns**.
   <br><b>ABYSS</b><br><sub>An ocean dive, scroll-scrubbed video with a camera dolly</sub>
 </td>
 </tr>
+<tr>
+<td align="center" colspan="3">
+  <a href="https://agiwhitelist.github.io/auteur/showcase/horo/"><img src="assets/readme/horo.webp" width="66%" alt="HORO LIMITED — a green enamel watch dial drawn in CSS beside a serif headline on a light page"></a>
+  <br><b>HORO</b><br><sub>Built by Kimi K3, not Claude — the dial is CSS and keeps your time</sub>
+</td>
+</tr>
 </table>
 
 FLUX / STATIC / SWARM / DRIFT are real-time WebGL. HALE is sourced CC0 geometry
 under a CC0 HDRI. TRUE NOON is 145KB with zero raster assets. PROOF is the system
 register — five routes gated for design-system drift. ATLAS and ABYSS are the
-video-scrub tier (`reference/scroll-flight.md`). The landing page is a tenth,
-built by the same discipline it sells.
+video-scrub tier (`reference/scroll-flight.md`). HORO is the portability test:
+another model, same file, and the gates it had to satisfy are the same ones —
+slopscan 0/0/0, 53fps at DPR 2, worst contrast 6.50, and a page whose measured
+lightness (0.740) matches what its own commit-sheet promised before the build
+(0.72). The landing page is an eleventh, built by the discipline it sells.
 
 > There are **no benchmark numbers** anywhere in this repo. auteur is a design
 > discipline, not a system with a throughput figure. The one quantitative claim
@@ -176,7 +189,12 @@ defaults, em-dash-slop copy, and more. Runs in CI on every shipped page — so t
 
 **`motionqa`** — a Playwright pass that drives the page on a throttled CPU and
 fails on dropped frames, long tasks, autoplay sound, or console errors. Sites
-target 60fps; the gate is what enforces it.
+target 60fps; the gate is what enforces it. It measures at **DPR 2** (1440×900
+@2x = 5.2MP), because fullscreen effects (bloom, DoF, grain) cost per pixel and a
+DPR-1 measurement certifies 60fps on a page that stutters on a retina laptop. On
+scenes with no fullscreen pass the two measurements match — that is the point:
+the number stays honest when the bloom lands. It also flags a dev server, whose
+numbers describe a build nobody ships.
 
 ```bash
 node scripts/motionqa.mjs site/showcase/swarm --headed
@@ -220,6 +238,7 @@ scripts/systemscan.mjs cross-route design-system drift gate
 scripts/slopscan.mjs  the anti-slop linter (zero deps)
 scripts/motionqa.mjs  the Playwright motion + a11y gate
 scripts/shoot.mjs     responsive screenshot capture
+scripts/chromadiff.mjs colour + lightness drift gate, measured in OKLCH
 templates/            commit-sheet, storyboard, cinema-QA, system-sheet
                       + scroll-flight-engine.js — drop-in scroll-scrubbed-video engine
 ```

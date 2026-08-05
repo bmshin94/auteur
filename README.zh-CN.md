@@ -73,10 +73,13 @@ git clone --depth 1 https://github.com/agiwhitelist/auteur ~/.claude/skills/aute
 
 Claude 会运行整个流水线 —— commit-sheet → 素材 → 构建 → 门禁 —— 然后把网站交给你。
 
-## 实力证明：九个在线网站
+## 实力证明：十个在线网站
 
 别只听宣传——直接打开看。每个网站均由 auteur 构建，且全部以 **0 fails / 0 warns** 的成绩
-通过该 skill 自带的 linter 检查。
+通过该 skill 自带的 linter 检查。第十个不是 Claude 做的：把 `SKILL.md` 和一份制表匠的
+需求交给 Kimi K3，它没看过前面九个网站，最终交出的却是一个明亮、衬线体、以墨绿为主的页面
+——而这个品类的所有本能反应都是黑配金。动工之前，它先用文字写明了自己打算打破的四条
+「本能习惯」。真正可迁移的是这套纪律，不是某个模型。
 
 <table>
 <tr>
@@ -121,12 +124,20 @@ Claude 会运行整个流水线 —— commit-sheet → 素材 → 构建 → �
   <br><b>ABYSS</b><br><sub>深海下潜，带镜头推轨的滚动 scrub 视频</sub>
 </td>
 </tr>
+<tr>
+<td align="center" colspan="3">
+  <a href="https://agiwhitelist.github.io/auteur/showcase/horo/"><img src="assets/readme/horo.webp" width="66%" alt="HORO LIMITED — a green enamel watch dial drawn in CSS beside a serif headline on a light page"></a>
+  <br><b>HORO</b><br><sub>由 Kimi K3 构建，而非 Claude——表盘用纯 CSS 绘制，且走的是你的真实时间</sub>
+</td>
+</tr>
 </table>
 
 FLUX / STATIC / SWARM / DRIFT 是实时 WebGL。HALE 采用 CC0 HDRI 环境光下的 CC0 几何模型。
 TRUE NOON 仅 145KB，零光栅素材。PROOF 是系统级应用——包含五个路由，受设计系统漂移门禁保护。
-ATLAS 和 ABYSS 属于视频 scrub 级别（`reference/scroll-flight.md`）。落地页是第十个作品，
-由它所倡导的同一套纪律构建。
+ATLAS 和 ABYSS 属于视频 scrub 级别（`reference/scroll-flight.md`）。HORO 是这套纪律的
+可迁移性验证：换一个模型、同一份文件，要过的门禁一模一样——slopscan 0/0/0、DPR 2 下
+53fps、最差文字对比度 6.50，页面实测亮度（0.740）与它自己在动工前写进 commit-sheet 的
+承诺（0.72）吻合。落地页是第十一个作品，由它所倡导的同一套纪律构建。
 
 > 本仓库中**没有任何 benchmark 数据**。auteur 是一种设计纪律，而不是一个追求吞吐量指标的系统。
 > 唯一的量化声明——linter 结果——你可以通过一条命令自行复现（见下文）。
@@ -170,7 +181,12 @@ node scripts/slopscan.mjs site/showcase/flux    # any showcase
 
 **`motionqa`** —— 一个 Playwright 测试流程，在受限 CPU 下驱动页面，
 遇到掉帧、长任务、自动播放声音或 console 报错即判定失败。网站
-目标是 60fps；门禁负责强制执行。
+目标是 60fps；门禁负责强制执行。它在 **DPR 2** 下测量（1440×900 @2x =
+520 万像素）：全屏后期效果（bloom、景深、颗粒）的开销按像素计价，DPR 1
+的测量结果会给「在任何 Retina 笔记本上都会卡顿的页面」发一张 60fps 的合格证。
+在没有全屏效果的场景里，两种测量结果一致——这正是重点：等哪天加上 bloom，
+这个数字依然诚实。它同时会标记出开发服务器，因为那上面的数字描述的是一个
+没人会真正加载的构建。
 
 ```bash
 node scripts/motionqa.mjs site/showcase/swarm --headed
@@ -212,11 +228,12 @@ scripts/systemscan.mjs 跨路由设计系统漂移门禁
 scripts/slopscan.mjs  anti-slop linter（零依赖）
 scripts/motionqa.mjs  Playwright 动效 + a11y 门禁
 scripts/shoot.mjs     响应式截图捕获
+scripts/chromadiff.mjs 色彩与亮度漂移门禁，以 OKLCH 计量
 templates/            commit-sheet, storyboard, cinema-QA, system-sheet
                       + scroll-flight-engine.js — 即插即用的滚动 scrub 视频引擎
 ```
 
-九个展示网站和落地页位于 [`gh-pages`](https://github.com/agiwhitelist/auteur/tree/gh-pages)
+十个展示网站和落地页位于 [`gh-pages`](https://github.com/agiwhitelist/auteur/tree/gh-pages)
 分支，这也是 GitHub Pages 部署的分支——因此安装该 skill 只会拉取约 1MB
 的配方，而不是 45MB 的渲染视频。CI 会同时 checkout 两个分支，
 并用 `main` 分支的 linter 检查 `gh-pages` 上的网站，确保门禁依然

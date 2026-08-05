@@ -51,8 +51,20 @@
 - auteur-allow suppressions in force (rule + reason).
 - Anything this project additionally forbids beyond SKILL.md's list.
 
+## Rejected — decisions that already have a history
+
+Everything below was tried and taken out, for a reason the finished page no longer shows. Without this list the next session — or the next model — sees an apparent mistake, confidently "corrects" it to the obvious answer, and reintroduces a problem that was already paid for once. The obvious answer is what got rejected; that is the whole point of the row. Write the row the moment you reject something, not at the end when the reason has evaporated.
+
+| What was tried | Why it lost | What is there instead |
+|---|---|---|
+| <e.g. subject lighter than its field> | <silhouette dissolved; no lighting fixed it> | <subject below the field in value, edges carry the light> |
+| <e.g. volumetric cones for the light shafts> | <read as cheap geometry; three rescue attempts, all worse> | <cut; the glow comes from the interior source alone> |
+
+The same discipline inside the code: a bare constant teaches nothing, so every tuned number says why it is that number and what breaks otherwise — `--scrub-smooth: 0.45; /* >0.6 and the scene visibly lags the cursor */`. Numbers that carry their reason survive being cleaned up by someone who does not know the history.
+
 ## Editing protocol
 1. Read this file fully before touching anything.
 2. New section → pick an existing section-opening pattern + an existing motion family + existing tokens.
 3. After any edit: `node <skill>/scripts/slopscan.mjs <src>` and re-shoot the changed viewport(s); compare against neighboring sections for family consistency.
 4. If the edit genuinely needs a new pattern — update THIS file first (that's a design decision, not a patch).
+5. An edit that "fixes" something in the Rejected table is a regression, however reasonable it looks. Disagree in the file first — argue the row, change it, then edit the page.

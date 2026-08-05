@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * shoot.mjs — screenshot journey for scroll-driven websites
- * Usage: node shoot.mjs <url> [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--reduced-motion] [--full]
+ * Usage: node shoot.mjs <url> [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--dpr 1] [--reduced-motion] [--full]
  */
 
 import { mkdir, writeFile } from 'fs/promises';
@@ -11,7 +11,7 @@ import { resolve, join } from 'path';
 // --- CLI parsing ---
 const args = process.argv.slice(2);
 if (!args.length || args[0] === '--help') {
-  console.log('Usage: node shoot.mjs <url> [<url>...] [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--reduced-motion] [--full]');
+  console.log('Usage: node shoot.mjs <url> [<url>...] [--stops 7] [--out shots] [--breakpoints 390,768,1440] [--dpr 1] [--reduced-motion] [--full]');
   console.log('Writes: <out>/bp<width>-stop<NN>.png  (also bp<width>-rm-stop<NN>.png with --reduced-motion, bp<width>-full.png with --full)');
   process.exit(0);
 }
@@ -30,6 +30,11 @@ const outDir      = resolve(get('--out', 'shots'));
 const bpArg       = get('--breakpoints', '390,768,1440');
 const reducedMotion = has('--reduced-motion');
 const fullPage    = has('--full');
+// Layout bugs read fine at 1x, so that stays the default (30 frames at 2x cost 4x the bytes for
+// nothing). Shoot --dpr 2 when the question is rendering rather than layout: hairline borders that
+// vanish, text that only looks crisp at 1x, moiré in a fine pattern, an image whose real resolution
+// is half what the layout claims.
+const dpr         = parseFloat(get('--dpr', '1')) || 1;
 
 const breakpoints = bpArg.split(',').map(Number);
 const heights     = { 390: 844, 768: 1024, 1440: 900 };
@@ -94,6 +99,7 @@ for (const width of breakpoints) {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
       viewport: { width, height: vpHeight },
+      deviceScaleFactor: dpr,
     });
     const page = await context.newPage();
 
@@ -143,6 +149,7 @@ for (const width of breakpoints) {
     if (reducedMotion) {
       const rmContext = await browser.newContext({
         viewport: { width, height: vpHeight },
+        deviceScaleFactor: dpr,
         reducedMotion: 'reduce',
       });
       const rmPage = await rmContext.newPage();

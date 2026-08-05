@@ -36,6 +36,28 @@ Reference table of saturated reflexes (both orders are FORBIDDEN as landing spot
 
 If the project's category isn't listed, derive the two reflexes yourself — the procedure matters more than the table.
 
+## 2.5 House tells — the third-order reflex, and the one you cannot see
+
+§2 catches what a generic AI does for a *category*. It cannot catch what **this skill** does regardless of category, because that reflex does not feel like a reflex from the inside: each project argues its way to the choice honestly, and every project argues its way to the same one. It shows up only when you line the finished work up side by side.
+
+Measured across the nine showcase sites, which share no subject, no client and no palette brief: **eight of nine are dark** (three landed within 0.002 of each other at mean L ≈ 0.177, at 97–98% dark pixels); a mono service font recurred to the point where the same face, Martian Mono, was independently chosen twice; amber (hue ≈ 30°) was the accent three times; the "logo left / status centre / action right" header appeared in seven of nine, and a scroll-instruction footer with a 01/05-style counter in six.
+
+None of those is a mistake. All of them together are a signature — and a signature is exactly what a client did not order.
+
+| # | The tell | What it looks like | Break it by |
+|---|---|---|---|
+| 1 | **Near-black by default** | body L < 0.25, "premium = dark" | committing to a lit page: L 0.5–0.9 with the drama in shadow, material and contrast |
+| 2 | **Mono service type** | tiny mono labels in the corners, technical-drawing voice | no chrome at all, or service type in the display family at small size |
+| 3 | **The status bar** | logo left · live-dot / status centre · action right | let the hero own the top edge; put navigation somewhere that costs a decision |
+| 4 | **Scroll-instruction footer** | "SCROLL TO DIVE" + `01 / 05` counter | trust the page; if the affordance is genuinely needed, make it part of the art direction |
+| 5 | **Amber or acid as the one accent** | hue ≈30 warm glow, or lime/neon on black | any committed hue whose reason is in the brief rather than in the palette's comfort zone |
+| 6 | **Wordmark-as-hero** | the brand name set enormous, centred, filling the viewport | an image, an object, a diagram, a sentence — the peak carries meaning, not letterforms |
+| 7 | **Glow as depth** | emissive bloom doing the work of lighting | real light: direction, falloff, shadow, material response |
+
+**The rule: break at least two, deliberately, and write which two in the commit-sheet (§7).** Breaking one is coincidence; two is a decision. If a tell genuinely belongs in this project — a broadcast brand really does want the on-air dot — keep it and say why, the same way `auteur-allow` works for a ban. What is not allowed is arriving at all seven again without noticing.
+
+The test is mechanical: put your hero beside the last thing this skill built. If a stranger could tell they came from the same studio, you have found the signature, not the direction.
+
 ## 3. Color
 
 **Strategy before swatches.** Choose a commitment tier in the commit-sheet:
@@ -52,6 +74,8 @@ If the project's category isn't listed, derive the two reflexes yourself — the
 - Gray text on colored background looks washed out → use a darker shade of the background's own hue, or text-color at reduced alpha.
 - Contrast: body ≥4.5:1, large ≥3:1, placeholders ≥4.5:1. When close, darken toward ink. "Light gray for elegance" is the #1 readability failure.
 - Gradients: only within one hue family or between adjacent hues that both belong to the brand; both-stops-purple-blue (hue 250–290) is banned; grays don't gradient.
+- **The subject must not dissolve into its own field.** A light hero on a light ground — ice on snow, a white product on a white sweep, pale type over a pale wash — reads as a smudge, and no amount of light fixes it. Put the subject *below* the field in value and let only its edges, seams and highlights carry brightness. On a scene that has this problem, this one correction is worth more than every other fix combined; check it on the greyscaled screenshot, where it is unmissable.
+- **Cheerful drift is the reflex you will not notice.** Handed a near-monochrome reference, a model still returns a friendlier, bluer, more saturated version of it — saturated sky-blue reads as game graphics, not as a photograph, and the drift survives even with the reference on screen. When the reference is desaturated, record its chroma in the commit-sheet as a number (mean OKLCH C) and check your own screenshot against it, because "looks about right" is exactly the judgement that drifted.
 
 ## 4. Typography
 

@@ -24,5 +24,10 @@
 | 18 | Mobile: pinned scenes shortened/unpinned, assets 720p | | |
 | 19 | Sound (if any): off by default, gesture-gated, toggle visible | | or n/a |
 | 20 | Watched the film: one slow + one fast full scroll, no felt jank | | |
+| 21 | Perf measured at DPR 2 on the production build, not a dev server | | motionqa line, verbatim |
+| 22 | Reference diff done: own frame vs the recon reference, greyscaled too | | what it did better / what changed / what was left |
+| 23 | chromadiff vs the reference passes (no cheerful drift) | | paste the chromadiff line |
+| 24 | Background lightness within ±0.12 of commit-sheet §2 | | `--target-l` line |
+| 25 | The two house tells named in commit-sheet §7 are actually broken | | which two, and what replaced them |
 
 **Verdict:** SHIP / LOOP BACK TO PHASE …

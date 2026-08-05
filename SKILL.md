@@ -1,7 +1,7 @@
 ---
 name: auteur
 description: Design and build complete web experiences from scratch — award-level product and marketing pages, cinematic scroll-directed sites where the page is directed like a film, and multi-screen products (app, dashboard, admin, settings, onboarding, docs site) built as one design system with every component, state and route in one style. Use whenever the user wants to create or redesign a landing page, website, hero section, portfolio, promo or product page; wants scroll animations, storytelling pages, or a site that feels like a movie; or says "make it beautiful", "make it wow", "cinematic", or "design system" — even if they name no technique. Generates its own assets via local CLIs (images, video frames, depth maps, 3D), and gates every ship with an executable anti-slop linter and a screenshot verification loop. Not for polishing a UI someone else built, and not for backend-only work.
-version: 1.2.0
+version: 1.3.0
 user-invocable: true
 argument-hint: "[build|direct|system|edit|audit|recon] <brief or target>"
 allowed-tools:
@@ -73,6 +73,7 @@ A ban may be overridden only through a written `auteur-allow` (see Verification)
 - Animate only `transform` and `opacity`. Stagger 30–80ms.
 - Motion budget: ≤ 3 scroll-triggered pattern families per page; **one** primary wow peak, supporting scenes at lower intensity.
 - Scrub smoothing 0.3–0.8. Hero video ≤ 2MB. LCP < 2.5s. CLS < 0.1.
+- Fullscreen passes (bloom, grain, DoF, any full-frame shader) are priced **per pixel, not per object** — they, not geometry, are what blows the frame budget. A perf number counts only when measured at **DPR 2 on a production build**: DPR 1 quarters the cost of every such pass, and a dev server roughly doubles the frame.
 - `prefers-reduced-motion` = an alternative art direction (gentler, not zero), never an afterthought.
 - Content must be readable with JS disabled: reveals enhance an already-visible default, never gate visibility.
 
@@ -92,14 +93,15 @@ All three registers share phase zero, and its centre of gravity is the commit-sh
 
 ## The commit-sheet (before any code, both registers)
 
-Slop is what happens when defaults make the decisions. The commit-sheet forces six real decisions onto paper before the first line of code. Copy `templates/COMMIT-SHEET.md` into the project (e.g. `design/COMMIT-SHEET.md`) and fill all six fields with non-defaults:
+Slop is what happens when defaults make the decisions. The commit-sheet forces seven real decisions onto paper before the first line of code. Copy `templates/COMMIT-SHEET.md` into the project (e.g. `design/COMMIT-SHEET.md`) and fill all seven fields with non-defaults:
 
 1. **Peak** — the ONE primary wow moment (direct) or signature element (build). One sentence. If you can't name it, you're not ready to build.
-2. **Color** — primary as OKLCH + commitment tier (restrained / committed / full-palette / drenched) + one line: *why this is not lavender, not cream, and not the category reflex*.
+2. **Color** — primary as OKLCH + commitment tier (restrained / committed / full-palette / drenched) + one line: *why this is not lavender, not cream, and not the category reflex* + **the background lightness as a number** (target mean L), because "dark feels premium" is where this skill drifts, and a number can be checked afterwards where a mood cannot.
 3. **Type** — display + text pairing on a contrast axis (serif+sans, geometric+humanist, mono+serif...) + one line: *why not Inter*.
 4. **Grid break** — the one concrete thing that breaks the symmetric-grid default: an overlap, an asymmetric split, a diagonal flow, a full-bleed interruption. Name it specifically.
 5. **Motion budget** — how many scroll-pattern families (≤3) and what they are.
 6. **Reflex check** — write down: (a) what a generic AI would do for this category (first-order reflex), (b) what a generic AI avoiding (a) would do (second-order reflex — e.g. fintech → "terminal dark mode" is *also* saturated now), (c) your chosen deviation from both. If recon ran, (a) is not a guess: whatever `design/refs/REFERENCES.md` showed five times *is* the reflex, dated and with receipts.
+7. **House tells broken** — name the **two (minimum)** items from `taste.md` §2.5 you are deliberately not doing this time, and what replaces each. Fields 6a/6b are the reflexes of the *category*; these are the reflexes of *this skill*, which recur across unrelated projects and are invisible from inside any one of them: near-black backgrounds, mono service labels, the logo/status/action header, the scroll-instruction footer, amber-or-acid accents, the wordmark-as-hero, glow standing in for lighting. Measured across nine showcase builds, eight were dark and three landed within 0.002 of the same lightness. A tell that genuinely belongs here can stay — say why, as with an `auteur-allow`.
 
 Gate: every field filled with a specific, non-default answer. An empty or generic field ("modern, clean look") means stop and decide. This artifact is checked again at verification.
 
@@ -129,7 +131,7 @@ Never skip a gate because the intermediate result "looks done". The gates exist 
 - `reference/scroll-cinema.md` — working code recipes: scroll-scrubbed video, canvas sequences, GSAP+Lenis foundation, CSS scroll-driven animations, text reveals, the two-keyframe WebGL displacement transition, view transitions, ambient audio, and the cinematic transition library (wipe, curtain, letterbox, shutter, depth parallax). Load during assembly.
 - `reference/scroll-flight.md` — the **video-scrub tier**: a photoreal "fly through the world" hero driven by scroll, using the drop-in `templates/scroll-flight-engine.js`. The canonical recipe for scroll-scrubbed *video* (encode-for-scrubbing `-g 8`, encoded-frame posters, SSIM seam gate, chain architecture A/B, iOS/mobile decode hardening, crossfade-vs-seamless seams). Load when the hero should be photoreal footage/AI-video rather than real-time WebGL.
 - `reference/ambient-backgrounds.md` — **quiet** texture for secondary sections and simpler builds (not a hero): a curated 6 editorial/analog effects (paper grain, ledger/blueprint rules, topographic contour, ink tide, sparse dust, one heat-haze shader) + a zero-motion static-mesh default. The governing rule (weaker than the quietest foreground element; one ambient per page), the CSS/SVG-first stack, and the `feTurbulence`-static perf rule. Load when a section needs to not be flat but must NOT compete with copy.
-- `reference/verify.md` — the acceptance pipeline: slopscan → screenshot journey → motion/perf/audio QA (FPS, long-tasks, audio-gate, reduced-motion, for Tier-1 scenes) → numeric rubric → QA sign-off. Load at phase 3.
+- `reference/verify.md` — the acceptance pipeline: slopscan → screenshot journey → motion/perf/audio QA (FPS at DPR 2 on a production build, long-tasks, audio-gate, reduced-motion, for Tier-1 scenes) → numeric rubric → **reference diff** (your frame beside the reference that set the direction, with `scripts/chromadiff.mjs` measuring the colour drift a model never sees in itself) → QA sign-off. Load at phase 3.
 
 ## Verification is part of the build
 

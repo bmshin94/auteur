@@ -958,6 +958,8 @@ for a rack-focus reveal as the section enters.
 - Audio OFF by default, user-gesture to start; the scroll story must stand alone in silence.
 - LOD: fewer / lower-res frames + drop the depth pass under `(max-width:768px)` or low-power — verify.md checks the tiers.
 - Preload the frame chain and decode to `ImageBitmap` before first paint — mid-scroll texture decode is visible jank.
+- **One function owns each shared quantity, and everything else calls it.** Scroll progress, camera path, the height of a terrain, the position of the peak: the moment two subsystems compute the same value separately they drift, and the drift looks like a rendering bug rather than a duplicated formula. A terrain whose height function lives inside the mesh component gets fog that lies flat and slices through the hills, and a cursor that dents the snow somewhere other than where it points — three readers, one truth, or three different worlds.
+- **Every number that shapes the scene lives in one config module, with a comment saying why it is that number and what breaks otherwise.** Constants scattered across components make tuning a search problem, and a bare `0.36` teaches the next session nothing — `bevel: 0.36 // never 0: the highlight needs a chamfer to run along, a sharp edge reads as plastic` survives being "cleaned up".
 
 ---
 

@@ -111,9 +111,18 @@ one-off inline style is.
 default for everything unnamed. Pass the numbers from your system-sheet, not one global figure.
 
 **What counts as a variant** is a *painted signature*: `background | colour | border-colour |
-border-width | radius | font-size/weight | padding | shadow`. A disabled button, a small button and
-an icon button are separate variants whether or not you named them — write the budget knowing that.
-Note also that `<a class="btn…">` is classified as a **button**, not a link.
+border-width | radius | font-size/weight | padding | shadow`. A small button and an icon button are
+separate variants whether or not you named them — write the budget knowing that. Note also that
+`<a class="btn…">` is classified as a **button**, not a link.
+
+**A state is not a variant.** `[disabled]` / `aria-disabled`, `aria-current` / `aria-selected`, and
+any control sitting inside an element carrying a non-default `data-state` are counted and printed
+separately, never against the budget. The reason is that the state matrix above is compulsory: a
+disabled secondary button is *supposed* to paint differently, and a run number is supposed to invert
+inside a late row. Charging those against the variant budget would mean a product with no disabled
+state scores better than one that implements it properly — the gate would be pushing against its own
+doctrine. Give your states real hooks (`data-state`, `aria-*`) and the gate reads them as states;
+paint a fifth button by hand with no hook and it is drift, correctly.
 
 It fails on:
 - **a control type over its variant budget** — the number you declared in the system-sheet;

@@ -106,11 +106,29 @@ const COLLECT = () => {
     ].join(' | ');
   };
 
+  // A STATE is not a variant. A disabled secondary button paints differently from an enabled one by
+  // design — that is the state matrix system.md demands, and counting it as a fifth button punishes
+  // the team that built it while a system with no disabled state at all sails through. Same for a
+  // control that inverts because the row it sits in is in an alert state: the component did not
+  // multiply, its container changed colour underneath it. Both are counted and reported separately.
+  const stateOf = el => {
+    if (el.disabled || el.getAttribute('aria-disabled') === 'true') return 'disabled';
+    if (el.getAttribute('aria-current') || el.getAttribute('aria-selected') === 'true') return 'current';
+    for (let n = el.parentElement, hops = 0; n && hops < 4; n = n.parentElement, hops++) {
+      const st = n.getAttribute?.('data-state');
+      if (st && st !== 'default') return `in-${st}`;
+    }
+    return null;
+  };
+
   const controls = {};
+  const states = {};
   let shotId = 0;
   for (const el of all) {
     const kind = controlKind(el);
     if (!kind) continue;
+    const state = stateOf(el);
+    if (state) { (states[kind] ??= {})[state] = ((states[kind] ??= {})[state] || 0) + 1; continue; }
     const k = sig(el);
     (controls[kind] ??= {});
     if (!controls[kind][k]) {
@@ -143,7 +161,7 @@ const COLLECT = () => {
   }
 
   return {
-    controls, colors, type, radii, shadows, space,
+    controls, states, colors, type, radii, shadows, space,
     focusable: all.filter(el => el.matches('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')).length,
     hasDisabled: all.some(el => el.matches('[disabled],[aria-disabled="true"]')),
     title: document.title.slice(0, 60),
@@ -277,6 +295,14 @@ for (const vars of Object.values(controlVariants)) for (const v of Object.values
   v.routes = new Set(Object.keys(v.perDoc));
 }
 
+// States, gathered the same way but never counted against the variant budget.
+const controlStates = {};
+for (const r of ok) for (const [kind, st] of Object.entries(r.states || {}))
+  for (const [name, n] of Object.entries(st)) {
+    ((controlStates[kind] ??= {})[name] ??= 0);
+    controlStates[kind][name] += n;
+  }
+
 const fails = [], warns = [];
 for (const [kind, vars] of Object.entries(controlVariants)) {
   const n = Object.keys(vars).length, b = budgetFor(kind);
@@ -349,6 +375,16 @@ L.push('');
 for (const [kind, vars] of Object.entries(controlVariants)) {
   L.push(`### ${kind}`);
   for (const [sig, v] of Object.entries(vars)) L.push(`- ×${v.count} on ${v.routes.size} route(s) — "${v.sample}" — \`${sig}\``);
+  if (controlStates[kind]) {
+    const st = Object.entries(controlStates[kind]).map(([n, c]) => `${n} ×${c}`).join(' · ');
+    L.push(`- *states (not counted as variants): ${st}*`);
+  }
+  L.push('');
+}
+if (Object.keys(controlStates).length) {
+  L.push('> States — disabled, current, and controls inside a row carrying a `data-state` — are');
+  L.push('> excluded from the variant budget. A disabled button paints differently on purpose; a');
+  L.push('> product that has no disabled state at all should not score better than one that does.');
   L.push('');
 }
 

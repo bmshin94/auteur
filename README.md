@@ -30,21 +30,49 @@ wordmark, torn by the cursor and re-forming. Built by the skill it sells.</sub>
 
 ## Install (30 seconds)
 
-auteur is a Claude Code skill: a `SKILL.md` plus reference recipes and a few
-runnable scripts. Drop it into your skills folder.
+auteur is an [Agent Skill](https://code.claude.com/docs/en/skills): a `SKILL.md`
+plus reference recipes and a few runnable scripts. ~1MB, no dependencies, no
+API keys, no build step.
+
+**Any agent — one command.** Detects what you have installed and writes to each
+agent's skills folder:
 
 ```bash
-git clone https://github.com/agiwhitelist/auteur ~/.claude/skills/auteur
+npx skills add agiwhitelist/auteur
 ```
 
-Then, in Claude Code:
+<sub>Claude Code · Codex · Cursor · OpenCode · Gemini CLI · Windsurf · Cline ·
+Goose · Copilot · Hermes · Kiro · Roo · OpenHands — [75+ agents](https://www.skills.sh/),
+project-level or `-g` for global.</sub>
+
+**Claude Code, as a plugin** — installs and updates in place:
+
+```
+/plugin marketplace add agiwhitelist/auteur
+/plugin install auteur@auteur
+```
+
+**OpenClaw:**
+
+```bash
+openclaw skills install git:agiwhitelist/auteur --global
+```
+
+**Anything else that reads a `SKILL.md`** — clone it into the agent's skills
+directory:
+
+```bash
+git clone --depth 1 https://github.com/agiwhitelist/auteur ~/.claude/skills/auteur
+```
+
+Then just ask:
 
 ```
 "build me a cinematic landing with auteur"
 ```
 
 Claude runs the pipeline — commit-sheet → assets → build → gate — and hands you
-the site. No API keys, no accounts, no build step.
+the site.
 
 ## The proof: nine live sites
 
@@ -132,8 +160,9 @@ A director's pipeline, enforced in order:
 slop, not vibes:
 
 ```bash
-node scripts/slopscan.mjs docs            # the landing
-node scripts/slopscan.mjs docs/showcase/flux
+git clone --depth 1 -b gh-pages https://github.com/agiwhitelist/auteur site
+node scripts/slopscan.mjs site                  # the landing
+node scripts/slopscan.mjs site/showcase/flux    # any showcase
 # → Summary: 0 fails, 0 warns, 0 suppressed
 ```
 
@@ -148,7 +177,7 @@ fails on dropped frames, long tasks, autoplay sound, or console errors. Sites
 target 60fps; the gate is what enforces it.
 
 ```bash
-node scripts/motionqa.mjs docs/showcase/swarm --headed
+node scripts/motionqa.mjs site/showcase/swarm --headed
 ```
 
 **`systemscan`** — for multi-screen products: crawls every route, reads what the
@@ -191,8 +220,13 @@ scripts/motionqa.mjs  the Playwright motion + a11y gate
 scripts/shoot.mjs     responsive screenshot capture
 templates/            commit-sheet, storyboard, cinema-QA, system-sheet
                       + scroll-flight-engine.js — drop-in scroll-scrubbed-video engine
-docs/                 the landing + the nine live showcase sites (GitHub Pages)
 ```
+
+The nine showcase sites and the landing live on the [`gh-pages`](https://github.com/agiwhitelist/auteur/tree/gh-pages)
+branch, which is what GitHub Pages serves — so installing the skill pulls ~1MB
+of recipes instead of 45MB of rendered video. CI checks out both branches and
+runs the linter from `main` against the site on `gh-pages`, so the gate still
+covers every shipped page.
 
 ## Requirements
 

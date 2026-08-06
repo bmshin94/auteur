@@ -306,14 +306,16 @@
         <div class="kicker"><span class="n">04</span><h2>Direct your first site</h2></div>
         <div class="install-grid">
           <ol class="steps reveal">
-            <li><span class="s">1</span><div><h3>Add the skill</h3><p>Drop <code>auteur/</code> into your Claude Code skills folder &mdash; <code>~/.claude/skills/auteur</code>.</p></div></li>
-            <li><span class="s">2</span><div><h3>Say the word</h3><p>Ask Claude Code to direct one. It runs the commit-sheet, generates, builds, and gates &mdash; then hands you the site.</p></div></li>
+            <li><span class="s">1</span><div><h3>Add the skill</h3><p><code>npx skills add agiwhitelist/auteur</code> &mdash; it detects the agents you have installed, Claude Code, Codex, Cursor, Gemini CLI and 70 more, and writes to each one's skills folder.</p></div></li>
+            <li><span class="s">2</span><div><h3>Say the word</h3><p>Ask your agent to direct one. It runs the commit-sheet, generates, builds, and gates &mdash; then hands you the site.</p></div></li>
           </ol>
           <div class="term reveal" aria-hidden="true">
             <div class="bar"><i></i><i></i><i></i></div>
             <div class="body"><span class="c"># 1 &mdash; install the skill</span>
-git clone https://github.com/agiwhitelist/auteur \
-  <span class="g">~/.claude/skills/auteur</span>
+npx skills add <span class="g">agiwhitelist/auteur</span>
+
+<span class="c"># or, in Claude Code, as a plugin</span>
+/plugin marketplace add <span class="g">agiwhitelist/auteur</span>
 
 <span class="c"># 2 &mdash; direct your first site</span>
 <span class="g">"build me a cinematic landing with auteur"</span></div>
@@ -321,7 +323,7 @@ git clone https://github.com/agiwhitelist/auteur \
         </div>
         <div class="cta-row">
           <a class="btn primary" href="https://github.com/agiwhitelist/auteur">Get auteur on GitHub ↗</a>
-          <a class="btn ghost" href="#work">Watch the four sites</a>
+          <a class="btn ghost" href="#work">Watch all ten sites</a>
         </div>
       </div>
     </section>

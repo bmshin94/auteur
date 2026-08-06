@@ -43,6 +43,12 @@ thefwa, lapa.ninja, mobbin — use WebSearch to find the write-ups, then pass th
 refscout positionally. Searching for the *page about* a site is more reliable than scraping the
 gallery that lists it.
 
+**Naming a technique you can see but can't name.** originkit.dev is a catalogue of ~160 motion
+effects, each with a live preview and a name — useful when a reference does something you want to
+describe in the commit-sheet and have no word for. Browse it, take the vocabulary, then build the
+thing yourself; the components are React/framer-motion behind a signup, and half the catalogue is
+the exact drop-in ornament `slopscan` exists to keep out.
+
 ### Reading a fingerprint
 
 Each entry reports what the page actually loaded and did, not what its marketing says:

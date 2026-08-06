@@ -12,7 +12,7 @@
 [![Release](https://img.shields.io/github/v/release/agiwhitelist/auteur?style=flat-square&color=111111&label=release)](https://github.com/agiwhitelist/auteur/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/agiwhitelist/auteur/ci.yml?style=flat-square&color=111111&label=anti-slop%20gate)](https://github.com/agiwhitelist/auteur/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
-[![Live](https://img.shields.io/badge/live-9%20sites-ff3b30?style=flat-square)](https://agiwhitelist.github.io/auteur/)
+[![Live](https://img.shields.io/badge/live-10%20sites-ff3b30?style=flat-square)](https://agiwhitelist.github.io/auteur/)
 
 **写代码前先锁定视觉方向。素材由本地 CLI 生成。每次发布都必须通过可执行的 anti-slop linter 和真实的动效检查。**
 
@@ -141,6 +141,10 @@ ATLAS 和 ABYSS 属于视频 scrub 级别（`reference/scroll-flight.md`）。HO
 
 > 本仓库中**没有任何 benchmark 数据**。auteur 是一种设计纪律，而不是一个追求吞吐量指标的系统。
 > 唯一的量化声明——linter 结果——你可以通过一条命令自行复现（见下文）。
+
+> 它同样**不是组件库**。没有任何东西来自现成的 registry：上面每一个网站都从自己的
+> commit-sheet 起手写成，原生实现，零运行时依赖。如果你想要拿来即用的动效组件，
+> 请用 shadcn 或 originkit.dev——这个 skill 执导页面，而不是囤积零件。
 
 ## 工作原理
 
